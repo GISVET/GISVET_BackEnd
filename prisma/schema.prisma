@@ -8,10 +8,13 @@ datasource db {
 }
 
 model accounts {
-  ID_PERSON        Int    @id @default(autoincrement())
+  ID_ACCOUNTS      Int    @id @default(autoincrement())
+  ID_PERSON        Int
   EMAIL            String @db.VarChar(50)
-  PASSWORD_ACCOUNT String @db.VarChar(50)
+  PASSWORD_ACCOUNT String @db.VarChar(100)
   STATE            String @db.Char(1)
+
+  @@index([ID_PERSON], map: "AC_FK_ID")
 }
 
 model brands {
