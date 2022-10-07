@@ -11,8 +11,7 @@ router.post('/createDependecie', createDependencie)
 
 router.post('/createUser', createPersons)
 router.get('/persons',getPersons)
-router.get('/persons:id',getIdPersons)
-router.get('/personRol',getRolPersons)
+router.get('/personsId',getIdPersons)
 router.put('/updatePerson',updatePersons)
 router.patch('/deletePerson', deletePersons)
 

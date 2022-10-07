@@ -28,7 +28,6 @@ model dependencies {
   ID_DEPARTMENT   Int    @id @default(autoincrement())
   DEPARTMENT_NAME String @unique(map: "DE_UQ_DE") @db.VarChar(50)
   TYPE_DEPARTMENT String @db.Char(1)
-  persons persons[]
 }
 
 model feature_products {
@@ -75,10 +74,10 @@ model persons {
   FULL_NAME       String @db.VarChar(50)
   DOCUMENT_TYPE   String @db.Char(1)
   DOCUMENT        Int
+  STATE           String @db.Char(1)
   GENDER          String @db.Char(1)
   PROFESSIONAL_ID Int?
   ID_DEPARTMENT   Int
-  dependencies       dependencies @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT], onUpdate: Restrict, map: "PE_FK_DE")
 
   @@index([ID_DEPARTMENT], map: "PE_FK_DE")
 }
