@@ -5,8 +5,9 @@ const createRole = async (req, res) =>{
     try {
         await prisma.roles.create({
             data:{
-                NAME: req.body.name,
-                DESCRIPTION: req.body.description,
+                ID_ROL: req.body.id_rol,
+                NAME_ROL: req.body.name_rol,
+                DESCRIPTION_ROL: req.body.description_rol,
                 STATE_ROL: "A",
             }
         })
@@ -20,7 +21,7 @@ const createRole = async (req, res) =>{
 
 
 const getRoles = async(req,res) =>{
-    const data = await prisma.roles.findUnique({
+    const data = await prisma.roles.findMany({
         where: {
             STATE_ROL: "A"
         }
@@ -29,9 +30,9 @@ const getRoles = async(req,res) =>{
 }
 
 const getIdRoles = async(req,res) =>{
-    const data = await prisma.roles.findMany({
+    const data = await prisma.roles.findUnique({
         where: {
-            NAME: req.body.NAME
+            ID_ROL: req.body.id_rol
         }
     })
     res.json(data)
@@ -40,11 +41,12 @@ const getIdRoles = async(req,res) =>{
 const updateRol = async (req, res) =>{
     await prisma.roles.update({
         where: {
-            ID_ROL: req.body.ID_ROL
+            ID_ROL: req.body.id_rol
         },
         data: {
-            NAME: req.body.name,
-            DESCRIPTION: req.body.description
+            NAME_ROL: req.body.name_rol,
+            DESCRIPTION_ROL: req.body.description_rol,
+            STATE_ROL: req.body.state_rol
         }
     })
     res.send({
@@ -52,9 +54,24 @@ const updateRol = async (req, res) =>{
     });
 }
 
+const deleteRoles = async (req, res) =>{
+    await prisma.roles.update({
+        where: {
+            ID_ROL: req.body.id_rol
+        },
+        data:{
+            STATE_ROL: "I"
+        }
+    })
+    res.send({
+        message: "El rol borrada con exito."
+    });
+}
+
 module.exports = {
     createRole,
     getRoles,
     getIdRoles,
-    updateRol
+    updateRol, 
+    deleteRoles
 }

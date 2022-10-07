@@ -74,7 +74,6 @@ model persons {
   FULL_NAME       String @db.VarChar(50)
   DOCUMENT_TYPE   String @db.Char(1)
   DOCUMENT        Int
-  STATE           String @db.Char(1)
   GENDER          String @db.Char(1)
   PROFESSIONAL_ID Int?
   ID_DEPARTMENT   Int
@@ -106,9 +105,10 @@ model products {
 }
 
 model roles {
-  ID_ROL      Int    @id @default(autoincrement())
-  NAME        String @db.VarChar(50)
-  DESCRIPTION String @db.VarChar(1024)
+  ID_ROL          Int    @id @default(autoincrement())
+  NAME_ROL        String @db.VarChar(50)
+  DESCRIPTION_ROL String @db.VarChar(1024)
+  STATE_ROL       String @db.Char(1)
 }
 
 model user_roles {
