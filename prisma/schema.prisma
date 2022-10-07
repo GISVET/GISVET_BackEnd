@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  ID_PERSON        Int    @id @default(autoincrement())
+  EMAIL            String @db.VarChar(50)
+  PASSWORD_ACCOUNT String @db.VarChar(50)
+  STATE            String @db.Char(1)
+}
+
+model brands {
+  ID_BRAND   Int    @id
+  NAME_BRAND String @unique(map: "BR_UQ_NO") @db.VarChar(50)
+}
+
+model clinic_histories {
+  ID_CLINIC_HISTORY Int    @id
+  NAME_PATIENT      String @db.VarChar(50)
+}
+
+model dependencies {
+  ID_DEPARTMENT   Int    @id @default(autoincrement())
+  DEPARTMENT_NAME String @unique(map: "DE_UQ_DE") @db.VarChar(50)
+  TYPE_DEPARTMENT String @db.Char(1)
+  persons persons[]
+}
+
+model feature_products {
+  ID_FEATURE         Int       @id @default(autoincrement())
+  EXPIRATION_DATE    DateTime  @db.Date
+  QUANTITY_PER_UNIT  Int
+  PRICE_PER_UNIT     Int
+  INVIMA             String    @db.VarChar(50)
+  MANUFACTURING_DATE DateTime? @db.Date
+}
+
+model history_item {
+  ID_ITEM           Int
+  ID_DEPARTMENT     Int
+  DATE_HISTORY_ITEM DateTime? @default(now()) @db.Timestamp(0)
+  QUANTITY          Int
+  ID_USER           Int
+
+  @@id([ID_ITEM, ID_DEPARTMENT])
+  @@index([ID_DEPARTMENT], map: "HI_FK_DE")
+}
+
+model history_user {
+  ID_HISTORY  Int       @id @default(autoincrement())
+  DATE_CREATE DateTime? @default(now()) @db.Timestamp(0)
+  ID_PERSON   Int
+}
+
+model item {
+  ID_ITEM       Int    @id @default(autoincrement())
+  PRESENTATION  String @db.Char(1)
+  QUANTITY      Int
+  ID_PRODUCT    Int
+  ID_FEATURE    Int
+  ID_DEPARTMENT Int
+
+  @@index([ID_DEPARTMENT], map: "IT_FK_DE")
+  @@index([ID_FEATURE], map: "IT_FK_FE")
+  @@index([ID_PRODUCT], map: "IT_FK_PR")
+}
+
+model persons {
+  ID_PERSON       Int    @id @default(autoincrement())
+  FULL_NAME       String @db.VarChar(50)
+  DOCUMENT_TYPE   String @db.Char(1)
+  DOCUMENT        Int
+  GENDER          String @db.Char(1)
+  PROFESSIONAL_ID Int?
+  ID_DEPARTMENT   Int
+  dependencies       dependencies @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT], onUpdate: Restrict, map: "PE_FK_DE")
+
+  @@index([ID_DEPARTMENT], map: "PE_FK_DE")
+}
+
+model product_tracings {
+  ID_PERSON         Int
+  ID_ITEM           Int
+  ID_CLINIC_HISTORY Int?
+  QUANTITY_USED     Int
+  UNIT_MEASUREMENT  String @db.Char(1)
+  DESTINY_SERVICE   String @db.Char(1)
+
+  @@id([ID_PERSON, ID_ITEM])
+  @@index([ID_CLINIC_HISTORY], map: "PT_FK_CH")
+  @@index([ID_ITEM], map: "PT_FK_IT")
+}
+
+model products {
+  ID_PRODUCT        Int    @id
+  ID_BRAND          Int
+  PRODUCT_NAME      String @unique(map: "PR_UQ_PN") @db.VarChar(50)
+  MEASUREMENT_UNITS String @db.Char(1)
+  TYPE_PRODUCT      String @db.Char(1)
+
+  @@index([ID_BRAND], map: "PR_FK_BR")
+}
+
+model roles {
+  ID_ROL      Int    @id @default(autoincrement())
+  NAME        String @db.VarChar(50)
+  DESCRIPTION String @db.VarChar(1024)
+}
+
+model user_roles {
+  ID_ROL    Int
+  ID_PERSON Int
+  STATE     String @db.Char(1)
+
+  @@id([ID_ROL, ID_PERSON])
+  @@index([ID_PERSON], map: "US_FK_PE")
+}
