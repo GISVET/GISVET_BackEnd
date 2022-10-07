@@ -6,7 +6,8 @@ const createRole = async (req, res) =>{
         await prisma.roles.create({
             data:{
                 NAME: req.body.name,
-                DESCRIPTION: req.body.description
+                DESCRIPTION: req.body.description,
+                STATE_ROL: "A",
             }
         })
         res.send({
@@ -19,15 +20,41 @@ const createRole = async (req, res) =>{
 
 
 const getRoles = async(req,res) =>{
+    const data = await prisma.roles.findUnique({
+        where: {
+            STATE_ROL: "A"
+        }
+    })
+    res.json(data)
+}
+
+const getIdRoles = async(req,res) =>{
     const data = await prisma.roles.findMany({
         where: {
-            ID_ROL: req.body.id_rol
+            NAME: req.body.NAME
         }
-
     })
+    res.json(data)
+}
+
+const updateRol = async (req, res) =>{
+    await prisma.roles.update({
+        where: {
+            ID_ROL: req.body.ID_ROL
+        },
+        data: {
+            NAME: req.body.name,
+            DESCRIPTION: req.body.description
+        }
+    })
+    res.send({
+        message: "Rol actualizado con éxito."
+    });
 }
 
 module.exports = {
     createRole,
-    getRoles
+    getRoles,
+    getIdRoles,
+    updateRol
 }

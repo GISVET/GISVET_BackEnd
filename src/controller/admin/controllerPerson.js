@@ -74,8 +74,6 @@ const deletePersons = async (req, res) =>{
     });
 }
 
-
-
 module.exports = {
     createPersons,
     getPersons,
