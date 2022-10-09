@@ -78,6 +78,7 @@ model persons {
   DOCUMENT_TYPE   String @db.Char(1)
   DOCUMENT        Int
   GENDER          String @db.Char(1)
+  STATE           String @db.Char(1)
   PROFESSIONAL_ID Int?
   ID_DEPARTMENT   Int
 

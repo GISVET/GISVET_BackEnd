@@ -5,10 +5,10 @@ const jwt = require('jsonwebtoken')
 
 const loginUser = async (req, res) => {
     const user =  req.body.email
-    const password = req.body.password
-    const verify = await prisma.accesos.findMany({
+    const password = req.body.password_account
+    const verify = await prisma.accounts.findMany({
         where:{
-            email: user 
+            EMAIL: user 
         }
     })
     if(verify.length === 0){
@@ -16,7 +16,7 @@ const loginUser = async (req, res) => {
             message : "email o contraseña incorrecta"
         })
     }else{
-        const validate = await compare(password, verify[0].password)
+        const validate = await compare(password, verify[0].PASSWORD_ACCOUNT)
         if(validate){
             jwt.sign({verify},"secretkey",{expiresIn: '120s'},(error,token)=>{
                 res.json({
@@ -33,29 +33,25 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
     const user = req.body.email
-    const password = req.body.password
+    const password = req.body.password_account
     
     if(password.length < 8 ) {
         res.send({message: "La contraseña debe tener minimo 8 caracteres"}) 
         return
     }else{
-        try {
-            await prisma.accesos.create({
-                data: {
-                    email: user,
-                    password: await encrypt(password),
-                    state: "A"
-                  },
-            })
-            res.send({
-                message: "Usuario registrado con exito."
-            })
-        } catch (error) {
-            res.send({
-                message: error
-            })
-        }
-    }
+        
+        await prisma.accounts.create({
+            data: {
+                EMAIL: user,
+                PASSWORD_ACCOUNT: await encrypt(password),
+                STATE: "A",
+                ID_PERSON: req.body.id_person
+            }
+        })
+        res.send({
+            message: "Usuario registrado con exito."
+        })
+    }    
 }
 
 module.exports = {
