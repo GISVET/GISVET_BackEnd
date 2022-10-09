@@ -3,6 +3,7 @@ const {createDependencie} = require("../controller/admin/controllerDependecies")
 const {createPersons,getPersons, getIdPersons,getRolPersons,updatePersons,deletePersons} = require("../controller/admin/controllerPerson")
 const {createPatient,getPatient,getSpecificPatient, updatePatient, deletePatient} = require("../controller/admin/controllerPatients")
 const {createRole,getRoles,getIdRoles, updateRol, deleteRoles} = require("../controller/admin/controllerRoles")
+const {createUserRoles, getUserRoles, getIdUserRoles, updateUserRoles, deleteUserRoles} = require ("../controller/admin/controllerUserRoles.js")
 
 //---------------------Dependencies--------------------------------
 router.post('/createDependecie', createDependencie)
@@ -22,6 +23,14 @@ router.get('/getRoles', getRoles)
 router.get('/getIdRoles', getIdRoles)
 router.put('/updateRol', updateRol)
 router.patch('/deleteRol', deleteRoles)
+
+//------------------------User Roles------------------------------
+
+router.post('/createUserRoles', createUserRoles)
+router.get('/getUserRoles', getUserRoles)
+router.get('/getIdUserRoles', getIdUserRoles)
+router.put('/updateUserRoles', updateUserRoles)
+router.patch('/deleteUserRoles', deleteUserRoles)
 
 //------------------------Patients -----------------------------------
 
