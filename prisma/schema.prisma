@@ -82,7 +82,7 @@ model persons {
   PROFESSIONAL_ID Int?
   ID_DEPARTMENT   Int
 
-  @@index([ID_DEPARTMENT], map: "PE_FK_DE")
+  @@index([ID_DEPARTMENT], map: "ID_DEPARTMENT")
 }
 
 model product_tracings {

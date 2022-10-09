@@ -5,9 +5,9 @@ const createUserRoles = async (req, res) =>{
     try {
         await prisma.user_roles.create({
             data:{
-                ID_ROL : req.body.id_user,
+                ID_ROL : req.body.id_rol,
                 ID_PERSON : req.body.id_person,
-                STATE : req.body.state
+                STATE : "A"
             }
         })
         res.send({
@@ -67,6 +67,7 @@ const deleteUserRoles = async (req, res) =>{
         message: "El rol de usuario ha sido borrado con exito."
     });
 }
+
 
 module.exports = {
     createUserRoles,

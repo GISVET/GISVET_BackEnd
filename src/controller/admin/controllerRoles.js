@@ -2,21 +2,16 @@ const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
 
 const createRole = async (req, res) =>{
-    try {
-        await prisma.roles.create({
-            data:{
-                ID_ROL: req.body.id_rol,
-                NAME_ROL: req.body.name_rol,
-                DESCRIPTION_ROL: req.body.description_rol,
-                STATE_ROL: "A",
-            }
-        })
-        res.send({
-            message: "Rol creado con éxito"
-        });
-    } catch (error) {
-        console.log(error)
-    }
+    await prisma.roles.create({
+        data:{
+            NAME_ROL: req.body.name_rol,
+            DESCRIPTION_ROL: req.body.description_rol,
+            STATE_ROL: "A",
+        }
+    })
+    res.send({
+        message: "Rol creado con éxito"
+    });
 }
 
 
