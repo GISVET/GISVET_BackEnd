@@ -31,6 +31,30 @@ const getPersons = async (req, res) =>{
     res.json(data) 
 }
 
+const getPersonsOrderAZ = async (req, res) =>{
+    const data = await prisma.persons.findMany({
+        where : {
+            STATE: "A"
+        },
+        orderBy: {
+            FULL_NAME: 'asc'
+        }         
+    })
+    res.json(data) 
+}
+
+const getPersonsOrderZA = async (req, res) =>{
+    const data = await prisma.persons.findMany({
+        where : {
+            STATE: "A"
+        },
+        orderBy: {
+            FULL_NAME: 'desc'
+        }         
+    })
+    res.json(data) 
+}
+
 const getIdPersons = async (req, res) =>{
     const data = await prisma.persons.findUnique({
         where:{
@@ -79,5 +103,7 @@ module.exports = {
     getPersons,
     getIdPersons,
     updatePersons,
-    deletePersons
+    deletePersons,
+    getPersonsOrderAZ,
+    getPersonsOrderZA
 }

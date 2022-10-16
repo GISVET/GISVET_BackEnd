@@ -57,6 +57,8 @@ model history_user {
   ID_HISTORY  Int       @id @default(autoincrement())
   DATE_CREATE DateTime? @default(now()) @db.Timestamp(0)
   ID_PERSON   Int
+
+  @@index([ID_PERSON], map: "FK_HU_PERSON_idx")
 }
 
 model item {
