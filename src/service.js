@@ -1,10 +1,13 @@
 const express = require('express')
 const gisvet = require('./routes/routes')
+const cors = require('cors')
 const app = express()
-const port = 3000
+const port = 3001
 
 app.use(express.json())
+app.use(cors())
 app.use(gisvet)
+
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
