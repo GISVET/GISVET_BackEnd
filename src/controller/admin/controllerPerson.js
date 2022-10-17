@@ -26,6 +26,10 @@ const getPersons = async (req, res) =>{
     const data = await prisma.persons.findMany({
         where : {
             STATE: "A"
+        },
+        include:{
+            dependencies: true,
+            user_roles: true 
         }
     })
     res.json(data) 

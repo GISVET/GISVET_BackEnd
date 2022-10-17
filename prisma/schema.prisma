@@ -9,28 +9,32 @@ datasource db {
 
 model accounts {
   ID_ACCOUNTS      Int    @id @default(autoincrement())
-  ID_PERSON        Int
   EMAIL            String @db.VarChar(50)
   PASSWORD_ACCOUNT String @db.VarChar(100)
   STATE            String @db.Char(1)
-
-  @@index([ID_PERSON], map: "AC_FK_ID")
+  persons          persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
+  ID_PERSON        Int
 }
 
 model brands {
   ID_BRAND   Int    @id
   NAME_BRAND String @unique(map: "BR_UQ_NO") @db.VarChar(50)
+  products products[]
 }
 
 model clinic_histories {
   ID_CLINIC_HISTORY Int    @id
   NAME_PATIENT      String @db.VarChar(50)
+  product_tracings product_tracings[]
 }
 
 model dependencies {
   ID_DEPARTMENT   Int    @id @default(autoincrement())
   DEPARTMENT_NAME String @unique(map: "DE_UQ_DE") @db.VarChar(50)
   TYPE_DEPARTMENT String @db.Char(1)
+  persons persons[]
+  history_item history_item[]
+  item item[]
 }
 
 model feature_products {
@@ -40,38 +44,39 @@ model feature_products {
   PRICE_PER_UNIT     Int
   INVIMA             String    @db.VarChar(50)
   MANUFACTURING_DATE DateTime? @db.Date
+  item item[]
 }
 
 model history_item {
+  item              item?   @relation(fields: [ID_ITEM], references: [ID_ITEM])
   ID_ITEM           Int
+  dependencies      dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT]) 
   ID_DEPARTMENT     Int
   DATE_HISTORY_ITEM DateTime? @default(now()) @db.Timestamp(0)
   QUANTITY          Int
   ID_USER           Int
-
   @@id([ID_ITEM, ID_DEPARTMENT])
-  @@index([ID_DEPARTMENT], map: "HI_FK_DE")
 }
 
 model history_user {
   ID_HISTORY  Int       @id @default(autoincrement())
   DATE_CREATE DateTime? @default(now()) @db.Timestamp(0)
+  persons      persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON]) 
   ID_PERSON   Int
-
-  @@index([ID_PERSON], map: "FK_HU_PERSON_idx")
 }
 
 model item {
   ID_ITEM       Int    @id @default(autoincrement())
   PRESENTATION  String @db.Char(1)
   QUANTITY      Int
+  products      products?   @relation(fields: [ID_PRODUCT], references: [ID_PRODUCT])
   ID_PRODUCT    Int
+  feature_products      feature_products?   @relation(fields: [ID_FEATURE], references: [ID_FEATURE])
   ID_FEATURE    Int
+  dependencies      dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT])
   ID_DEPARTMENT Int
-
-  @@index([ID_DEPARTMENT], map: "IT_FK_DE")
-  @@index([ID_FEATURE], map: "IT_FK_FE")
-  @@index([ID_PRODUCT], map: "IT_FK_PR")
+  history_item history_item[]
+  product_tracings product_tracings[]
 }
 
 model persons {
@@ -82,32 +87,37 @@ model persons {
   GENDER          String @db.Char(1)
   STATE           String @db.Char(1)
   PROFESSIONAL_ID Int?
+  dependencies    dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT])
   ID_DEPARTMENT   Int
-
-  @@index([ID_DEPARTMENT], map: "ID_DEPARTMENT")
+  accounts accounts[]
+  history_user history_user[]
+  user_roles user_roles[]
+  product_tracings product_tracings[]
 }
 
 model product_tracings {
+  ID_PRODUCT_TC       Int    @default(autoincrement())
+  persons      persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON]) 
   ID_PERSON         Int
+  item    item?   @relation(fields: [ID_ITEM], references: [ID_ITEM])
   ID_ITEM           Int
+  clinic_histories    clinic_histories?   @relation(fields: [ID_CLINIC_HISTORY], references: [ID_CLINIC_HISTORY])
   ID_CLINIC_HISTORY Int?
   QUANTITY_USED     Int
   UNIT_MEASUREMENT  String @db.Char(1)
   DESTINY_SERVICE   String @db.Char(1)
 
-  @@id([ID_PERSON, ID_ITEM])
-  @@index([ID_CLINIC_HISTORY], map: "PT_FK_CH")
-  @@index([ID_ITEM], map: "PT_FK_IT")
+  @@id([ID_PRODUCT_TC,ID_PERSON, ID_ITEM])
 }
 
 model products {
   ID_PRODUCT        Int    @id
+  brands    brands?   @relation(fields: [ID_BRAND], references: [ID_BRAND])
   ID_BRAND          Int
   PRODUCT_NAME      String @unique(map: "PR_UQ_PN") @db.VarChar(50)
-  MEASUREMENT_UNITS String @db.Char(1)
+  MEASUREMENT_UNITS String @db.Char(2)
   TYPE_PRODUCT      String @db.Char(1)
-
-  @@index([ID_BRAND], map: "PR_FK_BR")
+  item item[]
 }
 
 model roles {
@@ -115,13 +125,15 @@ model roles {
   NAME_ROL        String @db.VarChar(50)
   DESCRIPTION_ROL String @db.VarChar(1024)
   STATE_ROL       String @db.Char(1)
+  user_roles user_roles[]
 }
 
 model user_roles {
+  roles    roles?   @relation(fields: [ID_ROL], references: [ID_ROL])
   ID_ROL    Int
+  persons    persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
   ID_PERSON Int
   STATE     String @db.Char(1)
 
   @@id([ID_ROL, ID_PERSON])
-  @@index([ID_PERSON], map: "US_FK_PE")
 }
