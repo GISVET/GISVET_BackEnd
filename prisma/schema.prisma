@@ -83,10 +83,10 @@ model persons {
   ID_PERSON       Int    @id @default(autoincrement())
   FULL_NAME       String @db.VarChar(50)
   DOCUMENT_TYPE   String @db.Char(1)
-  DOCUMENT        Int
+  DOCUMENT        String @db.VarChar(20)
   GENDER          String @db.Char(1)
   STATE           String @db.Char(1)
-  PROFESSIONAL_ID Int?
+  PROFESSIONAL_ID String @db.VarChar(20)
   dependencies    dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT])
   ID_DEPARTMENT   Int
   accounts accounts[]
