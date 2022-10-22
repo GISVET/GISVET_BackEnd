@@ -11,7 +11,7 @@ model accounts {
   ID_ACCOUNTS      Int    @id @default(autoincrement())
   EMAIL            String @db.VarChar(50)
   PASSWORD_ACCOUNT String @db.VarChar(100)
-  STATE            String @db.Char(1)
+  STATE            String @db.Char(2)
   persons          persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
   ID_PERSON        Int
 }
@@ -67,7 +67,7 @@ model history_user {
 
 model item {
   ID_ITEM       Int    @id @default(autoincrement())
-  PRESENTATION  String @db.Char(1)
+  PRESENTATION  String @db.Char(2)
   QUANTITY      Int
   products      products?   @relation(fields: [ID_PRODUCT], references: [ID_PRODUCT])
   ID_PRODUCT    Int
@@ -82,11 +82,11 @@ model item {
 model persons {
   ID_PERSON       Int    @id @default(autoincrement())
   FULL_NAME       String @db.VarChar(50)
-  DOCUMENT_TYPE   String @db.Char(1)
+  DOCUMENT_TYPE   String @db.Char(2)
   DOCUMENT        String @db.VarChar(20)
-  GENDER          String @db.Char(1)
-  STATE           String @db.Char(1)
-  PROFESSIONAL_ID String @db.VarChar(20)
+  GENDER          String @db.Char(2)
+  STATE           String @db.Char(2)
+  PROFESSIONAL_ID String @db.VarChar(20) @default("null")
   dependencies    dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT])
   ID_DEPARTMENT   Int
   accounts accounts[]
@@ -104,8 +104,8 @@ model product_tracings {
   clinic_histories    clinic_histories?   @relation(fields: [ID_CLINIC_HISTORY], references: [ID_CLINIC_HISTORY])
   ID_CLINIC_HISTORY Int?
   QUANTITY_USED     Int
-  UNIT_MEASUREMENT  String @db.Char(1)
-  DESTINY_SERVICE   String @db.Char(1)
+  UNIT_MEASUREMENT  String @db.Char(2)
+  DESTINY_SERVICE   String @db.Char(2)
 
   @@id([ID_PRODUCT_TC,ID_PERSON, ID_ITEM])
 }
@@ -116,7 +116,7 @@ model products {
   ID_BRAND          Int
   PRODUCT_NAME      String @unique(map: "PR_UQ_PN") @db.VarChar(50)
   MEASUREMENT_UNITS String @db.Char(2)
-  TYPE_PRODUCT      String @db.Char(1)
+  TYPE_PRODUCT      String @db.Char(2)
   item item[]
 }
 
@@ -124,16 +124,17 @@ model roles {
   ID_ROL          Int    @id @default(autoincrement())
   NAME_ROL        String @db.VarChar(50)
   DESCRIPTION_ROL String @db.VarChar(1024)
-  STATE_ROL       String @db.Char(1)
+  STATE_ROL       String @db.Char(2)
   user_roles user_roles[]
 }
+
 
 model user_roles {
   roles    roles?   @relation(fields: [ID_ROL], references: [ID_ROL])
   ID_ROL    Int
   persons    persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
   ID_PERSON Int
-  STATE     String @db.Char(1)
+  STATE     String @db.Char(2)
 
   @@id([ID_ROL, ID_PERSON])
 }
