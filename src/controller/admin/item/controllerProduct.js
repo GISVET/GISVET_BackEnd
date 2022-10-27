@@ -1,27 +1,79 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
 
-const createPersons = async (req, res) =>{
+const createProducts = async (req, res) =>{
     try {
-        await prisma.persons.create({
+        await prisma.products.create({
             data:{
-                FULL_NAME: req.body.full_name,
-                DOCUMENT_TYPE: req.body.document_type,
-                DOCUMENT: req.body.document,
-                STATE: "A",
-                GENDER: req.body.gender,
-                PROFESSIONAL_ID: req.body.professional_id,
-                ID_DEPARTMENT: req.body.id_department
+                ID_PRODUCT: req.body.id_product,
+                ID_BRAND: req.body.id_brand,
+                PRODUCT_NAME: req.body.product_name,
+                MEASUREMENT_UNITS: req.body.measurement_units,
+                TYPE_PRODUCT: req.body.type_product,
             }
         })
         res.send({
-            message: "Persona creada con exito"
+            message: "Producto creado con exito"
         });
     } catch (error) {
+        if(error.code === undefined){
+            res.send({
+                message: "Ocurrio un error al momento de crear el producto"
+            });
+        }else{
+            res.send({
+                message: "Ocurrio el error "+error.code+ " al momento de crear el producto"
+            });  
+        }
+        console.log(error)
+    }
+}
+
+const getProduct = async (req, res) =>{
+    try {
+        const data = await prisma.products.findMany({
+            orderBy:{
+                PRODUCT_NAME: req.body.order_product_name
+            },
+            include:{
+                brands: true
+            }
+        })
+        res.json(data)
+    } catch (error) {
+        res.send({
+            message: "Ocurrió un error al momento obtener los productos"
+        })
+        console.log(error)
+    }
+}
+
+const updateProduct = async (req, res) =>{
+    try {
+        await prisma.products.update({
+            where:{
+                ID_PRODUCT: req.body.id_product
+            },
+            data:{
+                ID_BRAND: req.body.id_brand,
+                PRODUCT_NAME: req.body.product_name,
+                MEASUREMENT_UNITS: req.body.measurement_units,
+                TYPE_PRODUCT: req.body.type_product
+            }
+        })
+        res.send({
+            message: "El producto se actualizo con exito"
+        })
+    } catch (error) {
+        res.send({
+            message: "Ocurrió un error al momento de actualizar el producto"
+        })
         console.log(error)
     }
 }
 
 module.exports = {
-    createPersons
+    createProducts,
+    getProduct,
+    updateProduct
 }
