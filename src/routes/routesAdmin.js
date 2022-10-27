@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {createDependencie} = require("../controller/admin/controllerDependecies")
 const {createPersons,getPersons, getIdPersons,getRolPersons,updatePersons,deletePersons, getPersonsOrderAZ, getPersonsOrderZA} = require("../controller/admin/controllerPerson")
-const {createPatient,getPatient,getSpecificPatient, updatePatient, deletePatient} = require("../controller/admin/controllerPatients")
+const {createPatient,getPatient,getSpecificPatient, updatePatient} = require("../controller/admin/controllerPatients")
 const {createRole,getRoles,getIdRoles, updateRol, deleteRoles} = require("../controller/admin/controllerRoles")
 const {createUserRoles, getUserRoles, getIdUserRoles, updateUserRoles, deleteUserRoles} = require ("../controller/admin/controllerUserRoles.js")
 
@@ -36,10 +36,9 @@ router.patch('/deleteUserRoles', deleteUserRoles)
 
 //------------------------Patients -----------------------------------
 
-router.get('/getPatients',getPatient)
-router.get('/getSpecificPatient', getSpecificPatient)
 router.post('/createPatient', createPatient)
+router.get('/getPatient',getPatient)
+router.get('/getSpecificPatient', getSpecificPatient)
 router.put('/updatePatient', updatePatient)
-router.patch('/deletePatient', deletePatient)
 
 module.exports = router
