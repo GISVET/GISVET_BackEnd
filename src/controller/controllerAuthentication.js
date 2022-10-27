@@ -18,7 +18,7 @@ const loginUser = async (req, res) => {
     }else{
         const validate = await compare(password, verify[0].PASSWORD_ACCOUNT)
         if(validate){
-            jwt.sign({verify},"secretkey",{expiresIn: '520s'},(error,token)=>{
+            jwt.sign({verify},"secretkey",(error,token)=>{
                 res.json({
                     token: token
                 })
