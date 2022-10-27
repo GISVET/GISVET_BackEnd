@@ -1,9 +1,10 @@
 const router = require('express').Router()
 const {createDependencie} = require("../controller/admin/controllerDependecies")
-const {createPersons,getPersons, getIdPersons,getRolPersons,updatePersons,deletePersons, getPersonsOrderAZ, getPersonsOrderZA} = require("../controller/admin/controllerPerson")
+
+const {createPersons,getPersons, getIdPersons,getRolPersons,updatePersons,deletePersons, getPersonsOrderAZ, getPersonsOrderZA} = require("../controller/admin/persons/controllerPerson")
+const {createRole,getRoles,getIdRoles, updateRol, deleteRoles} = require("../controller/admin/persons/controllerRoles")
+const {createUserRoles, getUserRoles, getIdUserRoles, updateUserRoles, deleteUserRoles} = require ("../controller/admin/persons/controllerUserRoles")
 const {createPatient,getPatient,getSpecificPatient, updatePatient} = require("../controller/admin/controllerPatients")
-const {createRole,getRoles,getIdRoles, updateRol, deleteRoles} = require("../controller/admin/controllerRoles")
-const {createUserRoles, getUserRoles, getIdUserRoles, updateUserRoles, deleteUserRoles} = require ("../controller/admin/controllerUserRoles.js")
 
 //---------------------Dependencies--------------------------------
 router.post('/createDependecie', createDependencie)
@@ -40,5 +41,9 @@ router.post('/createPatient', createPatient)
 router.get('/getPatient',getPatient)
 router.post('/getSpecificPatient', getSpecificPatient)
 router.put('/updatePatient', updatePatient)
+
+//-------------------------Item---------------------------------
+
+router.use('/Item', require('./routesAdminItem'))
 
 module.exports = router
