@@ -38,7 +38,7 @@ router.patch('/deleteUserRoles', deleteUserRoles)
 
 router.post('/createPatient', createPatient)
 router.get('/getPatient',getPatient)
-router.get('/getSpecificPatient', getSpecificPatient)
+router.post('/getSpecificPatient', getSpecificPatient)
 router.put('/updatePatient', updatePatient)
 
 module.exports = router

@@ -64,19 +64,17 @@ const getSpecificPatient = async (req, res) =>{
     }        
 }
 
-const updatePatient = async (req, res) =>{
-    console.log("aaaaaaaaaaaaaaa")
+const updatePatient = async (req, res) =>{ 
     try{
-        await prisma.clinic_histories .update({
+        await prisma.clinic_histories.update({
             where: {
                 ID_CLINIC_HISTORY: req.body.id_clinic_history
             },
             data: {
                 ID_CLINIC_HISTORY: req.body.id_clinic_history,
-                NAME_PATIENT: req.body.name_patient.toUpperCase()
+                NAME_PATIENT: req.body.name_patient
             }
         })
-        console.log(ID_CLINIC_HISTORY)
         res.send({
             message: "El paciente ha sido actualizado con éxito."
         });
