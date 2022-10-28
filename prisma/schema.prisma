@@ -106,7 +106,7 @@ model product_tracings {
   QUANTITY_USED     Int
   UNIT_MEASUREMENT  String @db.Char(2)
   DESTINY_SERVICE   String @db.Char(2)
-
+  DATE_PRODUCT_TRACING DateTime @db.DateTime(0)
   @@id([ID_PRODUCT_TC,ID_PERSON, ID_ITEM])
 }
 
@@ -135,6 +135,5 @@ model user_roles {
   persons    persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
   ID_PERSON Int
   STATE     String @db.Char(2)
-
   @@id([ID_ROL, ID_PERSON])
 }

@@ -11,7 +11,7 @@ const createPersons = async (req, res) =>{
                 STATE: "A",
                 GENDER: req.body.gender,
                 PROFESSIONAL_ID: req.body.professional_id,
-                ID_DEPARTMENT: req.body.id_department
+                ID_DEPARTMENT: req.body.id_department             
             }
         })
         res.send({

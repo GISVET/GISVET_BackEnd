@@ -21,5 +21,4 @@ router.get('/getProduct',getProduct)
 router.post('/createProducts',createProducts)
 router.put('/updateProduct',updateProduct)
 
-
 module.exports = router
