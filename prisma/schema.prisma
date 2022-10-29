@@ -32,9 +32,9 @@ model dependencies {
   ID_DEPARTMENT   Int    @id @default(autoincrement())
   DEPARTMENT_NAME String @unique(map: "DE_UQ_DE") @db.VarChar(50)
   TYPE_DEPARTMENT String @db.Char(1)
-  persons persons[]
   history_item history_item[]
   item item[]
+  person_dependencies person_dependencies[]
 }
 
 model feature_products {
@@ -61,8 +61,7 @@ model history_item {
 model history_user {
   ID_HISTORY  Int       @id @default(autoincrement())
   DATE_CREATE DateTime? @default(now()) @db.Timestamp(0)
-  persons      persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON]) 
-  ID_PERSON   Int
+  DESCRIPTION_HISTORY_USER String @db.VarChar(1024)
 }
 
 model item {
@@ -86,13 +85,11 @@ model persons {
   DOCUMENT        String @db.VarChar(20)
   GENDER          String @db.Char(2)
   STATE           String @db.Char(2)
-  PROFESSIONAL_ID String @db.VarChar(20) @default("null")
-  dependencies    dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT])
-  ID_DEPARTMENT   Int
+  PROFESSIONAL_ID String @db.VarChar(20) @default("null")  
   accounts accounts[]
-  history_user history_user[]
   user_roles user_roles[]
   product_tracings product_tracings[]
+  person_dependencies person_dependencies[]
 }
 
 model product_tracings {
@@ -136,4 +133,14 @@ model user_roles {
   ID_PERSON Int
   STATE     String @db.Char(2)
   @@id([ID_ROL, ID_PERSON])
+}
+
+model person_dependencies {
+  persons    persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
+  ID_PERSON Int
+  dependencies    dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT])
+  ID_DEPARTMENT   Int
+  STATE     String @db.Char(2)
+  DATE_PERSON_DEPENDENCIES DateTime @db.DateTime(0)
+  @@id([ID_PERSON, ID_DEPARTMENT])
 }

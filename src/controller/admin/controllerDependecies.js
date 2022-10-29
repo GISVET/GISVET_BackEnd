@@ -17,6 +17,24 @@ const createDependencie = async (req, res) =>{
     }
 }
 
+const getDependencies = async (req, res) =>{
+    const data = await prisma.dependencies .findMany()
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontraron dependencias registradas"
+        })
+    }else if(data === null){
+        res.status(400).send({
+            message: "La dependencia no existe"
+        })
+    }else{
+        res.json(data)
+    }    
+}
+
+
+
 module.exports = {
-    createDependencie
+    createDependencie,
+    getDependencies
 }
