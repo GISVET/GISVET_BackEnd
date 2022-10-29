@@ -5,8 +5,8 @@ const createDependencie = async (req, res) =>{
     try {
         await prisma.dependencies.create({
             data:{
-                DEPARTMENT_NAME: req.body.department_name,
-                TYPE_DEPARTMENT: req.body.type_deparment
+                DEPENDENCIE_NAME: req.body.dependencie_name,
+                TYPE_DEPENDENCIE: req.body.type_dependencie
             }
         })
         res.send({
