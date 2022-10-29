@@ -29,9 +29,9 @@ model clinic_histories {
 }
 
 model dependencies {
-  ID_DEPARTMENT   Int    @id @default(autoincrement())
-  DEPARTMENT_NAME String @unique(map: "DE_UQ_DE") @db.VarChar(50)
-  TYPE_DEPARTMENT String @db.Char(1)
+  ID_DEPENDENCIE   Int    @id @default(autoincrement())
+  DEPENDENCIE_NAME String @unique(map: "DE_UQ_DE") @db.VarChar(50)
+  TYPE_DEPENDENCIE String @db.Char(2)
   history_item history_item[]
   item item[]
   person_dependencies person_dependencies[]
@@ -50,12 +50,12 @@ model feature_products {
 model history_item {
   item              item?   @relation(fields: [ID_ITEM], references: [ID_ITEM])
   ID_ITEM           Int
-  dependencies      dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT]) 
-  ID_DEPARTMENT     Int
+  dependencies      dependencies?   @relation(fields: [ID_DEPENDENCIE], references: [ID_DEPENDENCIE]) 
+  ID_DEPENDENCIE     Int
   DATE_HISTORY_ITEM DateTime? @default(now()) @db.Timestamp(0)
   QUANTITY          Int
   ID_USER           Int
-  @@id([ID_ITEM, ID_DEPARTMENT])
+  @@id([ID_ITEM, ID_DEPENDENCIE])
 }
 
 model history_user {
@@ -72,8 +72,8 @@ model item {
   ID_PRODUCT    Int
   feature_products      feature_products?   @relation(fields: [ID_FEATURE], references: [ID_FEATURE])
   ID_FEATURE    Int
-  dependencies      dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT])
-  ID_DEPARTMENT Int
+  dependencies      dependencies?   @relation(fields: [ID_DEPENDENCIE], references: [ID_DEPENDENCIE])
+  ID_DEPENDENCIE Int
   history_item history_item[]
   product_tracings product_tracings[]
 }
@@ -138,9 +138,9 @@ model user_roles {
 model person_dependencies {
   persons    persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
   ID_PERSON Int
-  dependencies    dependencies?   @relation(fields: [ID_DEPARTMENT], references: [ID_DEPARTMENT])
-  ID_DEPARTMENT   Int
+  dependencies    dependencies?   @relation(fields: [ID_DEPENDENCIE], references: [ID_DEPENDENCIE])
+  ID_DEPENDENCIE   Int
   STATE     String @db.Char(2)
   DATE_PERSON_DEPENDENCIES DateTime @db.DateTime(0)
-  @@id([ID_PERSON, ID_DEPARTMENT])
+  @@id([ID_PERSON, ID_DEPENDENCIE])
 }
