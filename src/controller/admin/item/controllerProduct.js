@@ -86,6 +86,30 @@ const getProductOrderZA = async (req, res) =>{
     }  
 }
 
+const getNameProducts = async (req, res) =>{    
+    try{
+        const data = await prisma.products .findMany({
+            where: {
+                PRODUCT_NAME: {
+                    startsWith: req.body.product_name
+                }
+            }
+        })        
+        if(data === null){
+            res.status(400).send({
+                message: "El paciente no existe"
+            })
+        }else {
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al momento de registrar al paciente"
+        })
+    }        
+}
+
+
 const updateProduct = async (req, res) =>{
     try {
         await prisma.products.update({
@@ -113,6 +137,7 @@ const updateProduct = async (req, res) =>{
 module.exports = {
     createProducts,
     getProduct,
+    getNameProducts,
     getProductOrderAZ,
     getProductOrderZA,
     updateProduct

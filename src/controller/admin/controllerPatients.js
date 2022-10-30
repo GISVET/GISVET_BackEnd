@@ -27,6 +27,21 @@ const createPatient = async (req, res) =>{
     }    
 }
 
+const getPatient = async (req, res) =>{
+    const data = await prisma.clinic_histories .findMany()
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontró el paciente solicitado"
+        })
+    }else if(data === null){
+        res.status(400).send({
+            message: "El paciente no existe"
+        })
+    }else{
+        res.json(data)
+    }    
+}
+
 const getPatiensOrderAZ = async (req, res) =>{
     const data = await prisma.clinic_histories.findMany({        
         orderBy: {
@@ -88,15 +103,15 @@ const getSpecificPatient = async (req, res) =>{
     }        
 }
 
-const getNamePatient = async (req, res) =>{
-    
+const getNamePatient = async (req, res) =>{    
     try{
         const data = await prisma.clinic_histories .findMany({
             where: {
-                NAME_PATIENT: req.body.name_patient
+                NAME_PATIENT: {
+                    startsWith: req.body.name_patient
+                }
             }
-        })
-        
+        })        
         if(data === null){
             res.status(400).send({
                 message: "El paciente no existe"
@@ -135,6 +150,7 @@ const updatePatient = async (req, res) =>{
 
 module.exports = {
     createPatient,
+    getPatient,
     getPatiensOrderAZ,
     getPatiensOrderZA,
     getSpecificPatient,
