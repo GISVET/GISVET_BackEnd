@@ -91,7 +91,7 @@ const getNameProducts = async (req, res) =>{
         const data = await prisma.products .findMany({
             where: {
                 PRODUCT_NAME: {
-                    startsWith: req.body.product_name
+                    contains: req.body.product_name
                 }
             }
         })        
