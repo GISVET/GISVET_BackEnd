@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const {createDependencie} = require("../controller/admin/controllerDependecies")
-const {createPatient,getPatient,getSpecificPatient, updatePatient} = require("../controller/admin/controllerPatients")
+const {createPatient,getPatiensOrderAZ, getPatiensOrderZA,getSpecificPatient, getNamePatient, updatePatient} = require("../controller/admin/controllerPatients")
 const {createProductTracings, getItemTracingProduct, getPersonProductTracing, getPacientProductTracing} = require ('../controller/admin/controllerProductTracings')
 
 //---------------------Dependencies--------------------------------
@@ -9,8 +9,10 @@ router.post('/createDependecie', createDependencie)
 //------------------------Patients -----------------------------------
 
 router.post('/createPatient', createPatient)
-router.get('/getPatient',getPatient)
+router.get('/getPatientsOrderAZ',getPatiensOrderAZ)
+router.get('/getPatientsOrderZA',getPatiensOrderZA)
 router.post('/getSpecificPatient', getSpecificPatient)
+router.post('/getNamePatient', getNamePatient)
 router.put('/updatePatient', updatePatient)
 
 

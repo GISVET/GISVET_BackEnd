@@ -33,7 +33,6 @@ const getDependencies = async (req, res) =>{
 }
 
 
-
 module.exports = {
     createDependencie,
     getDependencies

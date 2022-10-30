@@ -27,8 +27,12 @@ const createPatient = async (req, res) =>{
     }    
 }
 
-const getPatient = async (req, res) =>{
-    const data = await prisma.clinic_histories .findMany()
+const getPatiensOrderAZ = async (req, res) =>{
+    const data = await prisma.clinic_histories.findMany({        
+        orderBy: {
+            NAME_PATIENT: 'asc'
+        }         
+    })
     if (data[0] === undefined){
         res.status(400).send({
             message: "No se encontró el paciente solicitado"
@@ -39,7 +43,26 @@ const getPatient = async (req, res) =>{
         })
     }else{
         res.json(data)
-    }    
+    }  
+}
+
+const getPatiensOrderZA = async (req, res) =>{
+    const data = await prisma.clinic_histories.findMany({        
+        orderBy: {
+            NAME_PATIENT: 'desc'
+        }         
+    })
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontró el paciente solicitado"
+        })
+    }else if(data === null){
+        res.status(400).send({
+            message: "El paciente no existe"
+        })
+    }else{
+        res.json(data)
+    }  
 }
 
 
@@ -47,7 +70,8 @@ const getSpecificPatient = async (req, res) =>{
     try{
         const data = await prisma.clinic_histories .findUnique({
             where: {
-                ID_CLINIC_HISTORY: req.body.id_clinic_history
+                ID_CLINIC_HISTORY: req.body.id_clinic_history,
+                NAME_PATIENT : res.name_patient.sort()
             }
         })
         if(data === null){
@@ -55,6 +79,29 @@ const getSpecificPatient = async (req, res) =>{
                 message: "El paciente no existe"
             })
         }else{
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al momento de registrar al paciente"
+        })
+    }        
+}
+
+const getNamePatient = async (req, res) =>{
+    
+    try{
+        const data = await prisma.clinic_histories .findMany({
+            where: {
+                NAME_PATIENT: req.body.name_patient
+            }
+        })
+        
+        if(data === null){
+            res.status(400).send({
+                message: "El paciente no existe"
+            })
+        }else {
             res.json(data)
         }
     }catch(error){
@@ -87,8 +134,10 @@ const updatePatient = async (req, res) =>{
 }
 
 module.exports = {
-    getPatient,
     createPatient,
+    getPatiensOrderAZ,
+    getPatiensOrderZA,
     getSpecificPatient,
+    getNamePatient,
     updatePatient
 }
