@@ -31,7 +31,7 @@ const createProductTracings = async (req, res) =>{
     }
 }
 
-const getItemTracingProduct = async (req, res) =>{
+const getItemPT = async (req, res) =>{
     try{
         const data = await prisma.product_tracings .findMany({
             where: {
@@ -52,7 +52,7 @@ const getItemTracingProduct = async (req, res) =>{
     }        
 }
 
-const getPersonProductTracing = async (req, res) =>{
+const getPersonPT= async (req, res) =>{
     try{
         const data = await prisma.product_tracings .findMany({
             where: {
@@ -73,7 +73,7 @@ const getPersonProductTracing = async (req, res) =>{
     }        
 }
 
-const getPacientProductTracing = async (req, res) =>{
+const getPacientPT = async (req, res) =>{
     try{
         const data = await prisma.product_tracings .findMany({
             where: {
@@ -94,10 +94,143 @@ const getPacientProductTracing = async (req, res) =>{
     }        
 }
 
+const getItemPersonPT = async (req, res) =>{
+    try{
+        const data = await prisma.product_tracings .findMany({
+            where: {
+                ID_ITEM : req.body.id_item,
+                ID_PERSON: req.body.id_person
+            }
+        })
+        if(data === null){
+            res.status(400).send({
+                message: "No existe trazabilidad entre la persona y el item ingresado"
+            })
+        }else{
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al consultar la información"
+        })
+    }        
+}
+
+const getItemPacientPT = async (req, res) =>{
+    try{
+        const data = await prisma.product_tracings .findMany({
+            where: {
+                ID_ITEM : req.body.id_item,
+                ID_CLINIC_HISTORY: req.body.id_clinic_history
+            }
+        })
+        if(data === null){
+            res.status(400).send({
+                message: "No existe trazabilidad entre el paciente y el item ingresado"
+            })
+        }else{
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al consultar la información"
+        })
+    }        
+}
+const getItemDestinyPT = async (req, res) =>{
+    try{
+        const data = await prisma.product_tracings .findMany({
+            where: {
+                ID_ITEM : req.body.id_item,
+                DESTINY_SERVICE: req.body.destiny_service
+            }
+        })
+        if(data === null){
+            res.status(400).send({
+                message: "No existe trazabilidad entre el destino y el item ingresado"
+            })
+        }else{
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al consultar la información"
+        })
+    }        
+}
+const getPersonPacientPT = async (req, res) =>{
+    try{
+        const data = await prisma.product_tracings .findMany({
+            where: {
+                ID_PERSON : req.body.id_person,
+                ID_CLINIC_HISTORY: req.body.id_clinic_history
+            }
+        })
+        if(data === null){
+            res.status(400).send({
+                message: "No existe trazabilidad entre el paciente y el usuario ingresado"
+            })
+        }else{
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al consultar la información"
+        })
+    }        
+}
+const getPersonDestinyPT = async (req, res) =>{
+    try{
+        const data = await prisma.product_tracings .findMany({
+            where: {
+                ID_PERSON : req.body.id_person,
+                DESTINY_SERVICE: req.body.destiny_service
+            }
+        })
+        if(data === null){
+            res.status(400).send({
+                message: "No existe trazabilidad entre el usuario y el destino ingresado"
+            })
+        }else{
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al consultar la información"
+        })
+    }        
+}
+const getPacientDestinyPT = async (req, res) =>{
+    try{
+        const data = await prisma.product_tracings .findMany({
+            where: {
+                ID_CLINIC_HISTORY : req.body.id_clinic_history,
+                DESTINY_SERVICE: req.body.destiny_service
+            }
+        })
+        if(data === null){
+            res.status(400).send({
+                message: "No existe trazabilidad entre el destino y el paciente ingresado"
+            })
+        }else{
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al consultar la información"
+        })
+    }        
+}
 
 module.exports = {
     createProductTracings,
-    getItemTracingProduct,
-    getPersonProductTracing,
-    getPacientProductTracing
+    getItemPT,
+    getPersonPT,
+    getPacientPT,
+    getItemPersonPT,
+    getItemPacientPT,
+    getItemDestinyPT, 
+    getPersonPacientPT, 
+    getPersonDestinyPT, 
+    getPacientDestinyPT
 }

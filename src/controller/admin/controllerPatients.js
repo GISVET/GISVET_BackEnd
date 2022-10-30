@@ -7,7 +7,7 @@ const createPatient = async (req, res) =>{
         await prisma.clinic_histories .create({
             data:{
                 ID_CLINIC_HISTORY: req.body.id_clinic_history,
-                NAME_PATIENT: req.body.name_patient.toUpperCase()
+                NAME_PATIENT: req.body.name_patient
             }
         })
         res.send({
