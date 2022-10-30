@@ -1,6 +1,6 @@
 const router = require('express').Router()
 
-const {createPersons, createPersonAll,getPersons, getIdPersons,updatePersons,deletePersons} = require("../controller/admin/persons/controllerPerson")
+const {createPersons, createPersonAll, getPersons, getIdPersons,updatePersons,deletePersons} = require("../controller/admin/persons/controllerPerson")
 const {createRole,getRoles,getIdRoles, updateRol, deleteRoles} = require("../controller/admin/persons/controllerRoles")
 const {createUserRoles, getUserRoles, getIdUserRoles, updateUserRoles, deleteUserRoles} = require ("../controller/admin/persons/controllerUserRoles")
 

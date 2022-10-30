@@ -11,8 +11,7 @@ const createPersons = async (req, res) =>{
                 DOCUMENT: req.body.document,
                 STATE: "AC",
                 GENDER: req.body.gender,
-                PROFESSIONAL_ID: req.body.professional_id,
-                ID_DEPARTMENT: req.body.id_department             
+                PROFESSIONAL_ID: req.body.professional_id             
             }
         })
         res.send({
@@ -23,30 +22,6 @@ const createPersons = async (req, res) =>{
     }
 }
 
-const getPersons = async (req, res) =>{
-    const data = await prisma.persons.findMany({
-        where : {
-            STATE: "AC"
-        },
-        include:{
-            dependencies: true,
-            user_roles: true 
-        }
-    })
-    res.json(data) 
-}
-
-const getPersonsOrderAZ = async (req, res) =>{
-    const data = await prisma.persons.findMany({
-        where : {
-            STATE: "AC"
-        },
-        orderBy: {
-            FULL_NAME: 'asc'
-        }         
-    })
-    res.json(data) 
-  
 const createPersonAll = async (req, res) =>{
     try {
         const user = req.body.email
@@ -61,7 +36,7 @@ const createPersonAll = async (req, res) =>{
                     FULL_NAME: req.body.full_name,
                     DOCUMENT_TYPE: req.body.document_type,
                     DOCUMENT: req.body.document,
-                    STATE: "A",
+                    STATE: "AC",
                     GENDER: req.body.gender,
                     PROFESSIONAL_ID: req.body.professional_id           
                 }
@@ -132,7 +107,6 @@ const getIdPersons = async (req, res) =>{
     })
     res.json(data)
 }
-
 
 const updatePersons = async (req, res) =>{
     await prisma.persons.update({
