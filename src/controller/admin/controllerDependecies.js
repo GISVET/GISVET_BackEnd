@@ -66,6 +66,7 @@ const getIdDependencies = async (req, res) =>{
     }    
 }
 
+
 const updateDependecie = async (req, res) =>{
     try {
         await prisma.dependencies.update({

@@ -33,7 +33,7 @@ const createProductTracings = async (req, res) =>{
 
 const getItemTracingProduct = async (req, res) =>{
     try{
-        const data = await prisma.product_tracings .findUnique({
+        const data = await prisma.product_tracings .findMany({
             where: {
                 ID_ITEM : req.body.id_item
             }
@@ -54,7 +54,7 @@ const getItemTracingProduct = async (req, res) =>{
 
 const getPersonProductTracing = async (req, res) =>{
     try{
-        const data = await prisma.product_tracings .findUnique({
+        const data = await prisma.product_tracings .findMany({
             where: {
                 ID_PERSON : req.body.id_person
             }
@@ -75,7 +75,7 @@ const getPersonProductTracing = async (req, res) =>{
 
 const getPacientProductTracing = async (req, res) =>{
     try{
-        const data = await prisma.product_tracings .findUnique({
+        const data = await prisma.product_tracings .findMany({
             where: {
                 ID_CLINIC_HISTORY : req.body.id_clinic_history
             }

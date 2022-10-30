@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const {getBrand, createBrand, updateBrand} = require('../controller/admin/item/controllerBrands')
 const {getFeatureProduct, updateFeatureProduct, createFeatureProducts} = require('../controller/admin/item/controllerFeatureProduct')
-const {getProduct, createProducts, updateProduct} = require('../controller/admin/item/controllerProduct')
+const {getProduct,getNameProducts, getProductOrderAZ, getProductOrderZA, createProducts, updateProduct} = require('../controller/admin/item/controllerProduct')
 
 //---------------------- Brands -----------------------------------
 
@@ -17,8 +17,11 @@ router.put('/updateFeatureProduct',updateFeatureProduct)
 
 // --------------------------- Product ----------------------
 
-router.get('/getProduct',getProduct)
 router.post('/createProducts',createProducts)
+router.get('/getProduct',getProduct)
+router.get('/getNameProduct',getNameProducts)
+router.get('/getProductOrderAZ',getProductOrderAZ)
+router.get('/getProductOrderZA',getProductOrderZA)
 router.put('/updateProduct',updateProduct)
 
 module.exports = router

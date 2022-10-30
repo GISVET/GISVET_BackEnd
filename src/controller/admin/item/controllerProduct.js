@@ -48,6 +48,68 @@ const getProduct = async (req, res) =>{
     }
 }
 
+const getProductOrderAZ = async (req, res) =>{
+    const data = await prisma.products.findMany({        
+        orderBy: {
+            PRODUCT_NAME: 'asc'
+        }         
+    })
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontraron productos relacionados"
+        })
+    }else if(data === null){
+        res.status(400).send({
+            message: "No existen productos"
+        })
+    }else{
+        res.json(data)
+    }  
+}
+
+const getProductOrderZA = async (req, res) =>{
+    const data = await prisma.products.findMany({        
+        orderBy: {
+            PRODUCT_NAME: 'desc'
+        }         
+    })
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontraron productos relacionados"
+        })
+    }else if(data === null){
+        res.status(400).send({
+            message: "No existen productos"
+        })
+    }else{
+        res.json(data)
+    }  
+}
+
+const getNameProducts = async (req, res) =>{    
+    try{
+        const data = await prisma.products .findMany({
+            where: {
+                PRODUCT_NAME: {
+                    contains: req.body.product_name
+                }
+            }
+        })        
+        if(data === null){
+            res.status(400).send({
+                message: "El paciente no existe"
+            })
+        }else {
+            res.json(data)
+        }
+    }catch(error){
+        res.status(400).send({
+            message: "Ocurrio el error "+ error.code+ " al momento de registrar al paciente"
+        })
+    }        
+}
+
+
 const updateProduct = async (req, res) =>{
     try {
         await prisma.products.update({
@@ -75,5 +137,8 @@ const updateProduct = async (req, res) =>{
 module.exports = {
     createProducts,
     getProduct,
+    getNameProducts,
+    getProductOrderAZ,
+    getProductOrderZA,
     updateProduct
 }
