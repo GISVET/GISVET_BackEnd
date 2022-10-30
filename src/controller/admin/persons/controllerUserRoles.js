@@ -7,11 +7,11 @@ const createUserRoles = async (req, res) =>{
             data:{
                 ID_ROL : req.body.id_rol,
                 ID_PERSON : req.body.id_person,
-                STATE : "A"
+                STATE : "AC"
             }
         })
         res.send({
-            message: "Roles de usuario ha creada con exito"
+            message: "Roles de usuario ha creada con éxito"
         });
     } catch (error) {
         console.log(error)
@@ -21,7 +21,7 @@ const createUserRoles = async (req, res) =>{
 const getUserRoles = async (req, res) =>{
     const data = await prisma.user_roles.findMany({
         where : {
-            STATE: "A"
+            STATE: "AC"
         }
     })
     res.json(data) 
@@ -60,11 +60,11 @@ const deleteUserRoles = async (req, res) =>{
             ID_PERSON: req.body.id_person
         },
         data:{
-            STATE: "I",
+            STATE: "IC",
         }
     })
     res.send({
-        message: "El rol de usuario ha sido borrado con exito."
+        message: "El rol de usuario ha sido borrado con éxito."
     });
 }
 

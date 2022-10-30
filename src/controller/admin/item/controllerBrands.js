@@ -7,20 +7,20 @@ const createBrand = async (req, res) =>{
         await prisma.brands.create({
             data:{
                 ID_BRAND: req.body.id_brand,
-                NAME_BRAND: req.body.name_brand
+                NAME_BRAND: req.body.name_brand.charAt(0).toUpperCase() + req.body.name_brand.slice(1)
             }
         })
         res.send({
-            message: "Marca creada con exito"
+            message: "Marca creada con éxito"
         });
     } catch (error) {
         if(error.code === undefined){
             res.send({
-                message: "Ocurrio un error al momento de crear la marca"
+                message: "Ocurrió un error al momento de crear la marca"
             });
         }else{
             res.send({
-                message: "Ocurrio el error "+error.code+ " al momento de crear la marca"
+                message: "Ocurrió el error "+error.code+ " al momento de crear la marca"
             });  
         }
         console.log(error)
@@ -35,20 +35,20 @@ const updateBrand = async (req, res)=>{
             },
             data:{
                 ID_BRAND: req.body.id_brand,
-                NAME_BRAND: req.body.name_brand
+                NAME_BRAND: req.body.name_brand.charAt(0).toUpperCase() + req.body.name_brand.slice(1)
             }
         })
         res.send({
-            message: "La marca se actualizo de manera exitosa"
+            message: "La marca se actualizó de manera exitosa"
         })
     } catch (error) {
         if(error.code === undefined){
             res.send({
-                message: "Ocurrio un error al momento de crear la marca"
+                message: "Ocurrió un error al momento de crear la marca"
             });
         }else{
             res.send({
-                message: "Ocurrio el error "+error.code+ " al momento de crear la marca"
+                message: "Ocurrió el error "+error.code+ " al momento de crear la marca"
             });  
         }
         console.log(error)
