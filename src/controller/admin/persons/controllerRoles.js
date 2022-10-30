@@ -4,9 +4,9 @@ const prisma = new PrismaClient()
 const createRole = async (req, res) =>{
     await prisma.roles.create({
         data:{
-            NAME_ROL: req.body.name_rol,
+            NAME_ROL: req.body.name_rol.charAt(0).toUpperCase()  + req.body.name_rol.slice(1),
             DESCRIPTION_ROL: req.body.description_rol,
-            STATE_ROL: "A",
+            STATE_ROL: "AC",
         }
     })
     res.send({
@@ -18,7 +18,7 @@ const createRole = async (req, res) =>{
 const getRoles = async(req,res) =>{
     const data = await prisma.roles.findMany({
         where: {
-            STATE_ROL: "A"
+            STATE_ROL: "AC"
         }
     })
     res.json(data)
@@ -39,7 +39,7 @@ const updateRol = async (req, res) =>{
             ID_ROL: req.body.id_rol
         },
         data: {
-            NAME_ROL: req.body.name_rol,
+            NAME_ROL: req.body.name_rol.charAt(0).toUpperCase()  + req.body.name_rol.slice(1),
             DESCRIPTION_ROL: req.body.description_rol,
             STATE_ROL: req.body.state_rol
         }
@@ -55,11 +55,11 @@ const deleteRoles = async (req, res) =>{
             ID_ROL: req.body.id_rol
         },
         data:{
-            STATE_ROL: "I"
+            STATE_ROL: "IC"
         }
     })
     res.send({
-        message: "El rol borrada con exito."
+        message: "El rol borrada con éxito."
     });
 }
 
