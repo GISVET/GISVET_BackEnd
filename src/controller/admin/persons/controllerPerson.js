@@ -1,5 +1,6 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const { encrypt, compare } = require('../../../helpers/handleBcrypt')
 
 const createPersons = async (req, res) =>{
     try {
@@ -45,16 +46,80 @@ const getPersonsOrderAZ = async (req, res) =>{
         }         
     })
     res.json(data) 
+  
+const createPersonAll = async (req, res) =>{
+    try {
+        const user = req.body.email
+        const password = req.body.password_account
+
+        if(password.length < 8 ) {
+            res.status(400).send({message: "La contraseña debe tener minimo 8 caracteres"}) 
+            return
+        }else{
+            const data = await prisma.persons.create({
+                data:{
+                    FULL_NAME: req.body.full_name,
+                    DOCUMENT_TYPE: req.body.document_type,
+                    DOCUMENT: req.body.document,
+                    STATE: "A",
+                    GENDER: req.body.gender,
+                    PROFESSIONAL_ID: req.body.professional_id           
+                }
+            })
+
+            await prisma.accounts.create({
+                data: {
+                    EMAIL: user,
+                    PASSWORD_ACCOUNT: await encrypt(password),
+                    STATE: "AC",
+                    ID_PERSON: data.ID_PERSON
+                }
+            })
+
+            const rol = await prisma.roles.findMany({
+                where : {
+                    NAME_ROL:{
+                        contains: req.body.name_rol
+                    }
+                }
+            })
+
+            await prisma.user_roles.create({
+                data:{
+                    ID_ROL : rol[0].ID_ROL,
+                    ID_PERSON : data.ID_PERSON,
+                    STATE : "AC"
+                }
+            })
+            res.send({
+                message: "Usuario registrado con exito."
+            })
+        } 
+    } catch (error) {
+        console.log(error)
+    }
 }
 
-const getPersonsOrderZA = async (req, res) =>{
+const getPersons = async (req, res) =>{
     const data = await prisma.persons.findMany({
         where : {
-            STATE: "AC"
+            STATE: "AC",
+            FULL_NAME:{
+                contains: req.body.name_person
+            }
         },
         orderBy: {
-            FULL_NAME: 'desc'
-        }         
+            FULL_NAME: req.body.order_name
+        }, 
+        include:{
+            user_roles: true,
+            accounts: true,
+            person_dependencies:{
+                include:{
+                    dependencies: true
+                }
+            }
+        }
     })
     res.json(data) 
 }
@@ -79,8 +144,7 @@ const updatePersons = async (req, res) =>{
             DOCUMENT_TYPE: req.body.document_type,
             DOCUMENT: req.body.document,
             GENDER: req.body.gender,
-            PROFESSIONAL_ID: req.body.professional_id,
-            ID_DEPARTMENT: req.body.id_department
+            PROFESSIONAL_ID: req.body.professional_id
         }
     })
     res.send({
@@ -104,10 +168,9 @@ const deletePersons = async (req, res) =>{
 
 module.exports = {
     createPersons,
+    createPersonAll,
     getPersons,
     getIdPersons,
     updatePersons,
-    deletePersons,
-    getPersonsOrderAZ,
-    getPersonsOrderZA
+    deletePersons
 }
