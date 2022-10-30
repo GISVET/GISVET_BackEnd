@@ -108,7 +108,7 @@ const getNamePatient = async (req, res) =>{
         const data = await prisma.clinic_histories .findMany({
             where: {
                 NAME_PATIENT: {
-                    startsWith: req.body.name_patient
+                    contains: req.body.name_patient
                 }
             }
         })        
