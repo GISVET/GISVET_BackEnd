@@ -120,8 +120,7 @@ const updatePersons = async (req, res) =>{
             DOCUMENT_TYPE: req.body.document_type,
             DOCUMENT: req.body.document,
             GENDER: req.body.gender,
-            PROFESSIONAL_ID: req.body.professional_id,
-            ID_DEPARTMENT: req.body.id_department
+            PROFESSIONAL_ID: req.body.professional_id
         }
     })
     res.send({
