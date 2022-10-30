@@ -48,6 +48,44 @@ const getProduct = async (req, res) =>{
     }
 }
 
+const getProductOrderAZ = async (req, res) =>{
+    const data = await prisma.products.findMany({        
+        orderBy: {
+            PRODUCT_NAME: 'asc'
+        }         
+    })
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontraron productos relacionados"
+        })
+    }else if(data === null){
+        res.status(400).send({
+            message: "No existen productos"
+        })
+    }else{
+        res.json(data)
+    }  
+}
+
+const getProductOrderZA = async (req, res) =>{
+    const data = await prisma.products.findMany({        
+        orderBy: {
+            PRODUCT_NAME: 'desc'
+        }         
+    })
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontraron productos relacionados"
+        })
+    }else if(data === null){
+        res.status(400).send({
+            message: "No existen productos"
+        })
+    }else{
+        res.json(data)
+    }  
+}
+
 const updateProduct = async (req, res) =>{
     try {
         await prisma.products.update({
@@ -75,5 +113,7 @@ const updateProduct = async (req, res) =>{
 module.exports = {
     createProducts,
     getProduct,
+    getProductOrderAZ,
+    getProductOrderZA,
     updateProduct
 }
