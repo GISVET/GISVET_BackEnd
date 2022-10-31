@@ -29,16 +29,29 @@ const createFeatureProducts = async (req, res) =>{
     }
 }
 
-const getFeatureProduct = async (req, res) =>{
-    try {
-        const data = await prisma.feature_products.findMany()
-        res.json(data)
-    } catch (error) {
-        res.send({
-            message: "Ocurrió un error al momento obtener las características del producto"
+const getFeatureProducts = async (req, res) =>{
+    const data = await prisma.product_tracings .findMany({
+        where:{
+            EXPIRATION_DATE : req.body.expiration_date,
+            QUANTITY_PER_UNIT: req.body.quantity_per_unit,
+            PRICE_PER_UNIT: req.body.price_per_unit,
+            INVIMA: req.body.invima
+        },
+        orderBy:{
+            INVIMA: req.body.order
+        }
+    })
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontraron características del producto"
         })
-        console.log(error)
-    }
+    }else if(data === null){
+        res.status(400).send({
+            message: "Las características del producto no existen"
+        })
+    }else{
+        res.json(data)
+    }    
 }
 
 const updateFeatureProduct = async (req, res) =>{
@@ -68,6 +81,6 @@ const updateFeatureProduct = async (req, res) =>{
 
 module.exports = {
     createFeatureProducts,
-    getFeatureProduct,
+    getFeatureProducts,
     updateFeatureProduct
 }
