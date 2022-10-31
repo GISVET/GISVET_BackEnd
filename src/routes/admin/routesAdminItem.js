@@ -1,7 +1,9 @@
 const router = require('express').Router()
-const {getBrand, createBrand, updateBrand} = require('../controller/admin/item/controllerBrands')
-const {getFeatureProducts, updateFeatureProduct, createFeatureProducts} = require('../controller/admin/item/controllerFeatureProduct')
-const {getProduct,getNameProducts,createProducts, updateProduct} = require('../controller/admin/item/controllerProduct')
+
+const {getBrand, createBrand, updateBrand} = require('../../controller/admin/item/controllerBrands')
+const {getFeatureProducts, updateFeatureProduct, createFeatureProducts} = require('../../controller/admin/item/controllerFeatureProduct')
+const {getProduct,getNameProducts,createProducts, updateProduct} = require('../../controller/admin/item/controllerProduct')
+
 
 //---------------------- Brands -----------------------------------
 
