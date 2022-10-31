@@ -7,7 +7,7 @@ const {createProductTracings, getItemPT, getPersonPT, getPacientPT, getItemPacie
 
 //---------------------Dependencies--------------------------------
 router.post('/createDependecie', createDependencie)
-router.post('/getDependencies', getDependencies)
+router.get('/getDependencies', getDependencies)
 router.post('/getIdDependencies', getIdDependencies)
 router.put('/updateDependecie', updateDependecie)
 
