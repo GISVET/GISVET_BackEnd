@@ -13,16 +13,16 @@ const createProducts = async (req, res) =>{
             }
         })
         res.send({
-            message: "Producto creado con exito"
+            message: "Producto creado con éxito"
         });
     } catch (error) {
         if(error.code === undefined){
             res.send({
-                message: "Ocurrio un error al momento de crear el producto"
+                message: "Ocurrió un error al momento de crear el producto"
             });
         }else{
             res.send({
-                message: "Ocurrio el error "+error.code+ " al momento de crear el producto"
+                message: "Ocurrió el error "+error.code+ " al momento de crear el producto"
             });  
         }
         console.log(error)
@@ -30,60 +30,33 @@ const createProducts = async (req, res) =>{
 }
 
 const getProduct = async (req, res) =>{
-    try {
-        const data = await prisma.products.findMany({
-            orderBy:{
-                PRODUCT_NAME: req.body.order_product_name
+    const data = await prisma.products .findMany({
+        where:{
+            PRODUCT_NAME:{
+                contains: req.body.getNameProducts
             },
-            include:{
-                brands: true
+            ID_PRODUCT:{
+                contains: req.body.id_product
+            },
+            ID_BRAND:{
+                contains: req.body.id_brand
             }
-        })
-        res.json(data)
-    } catch (error) {
-        res.send({
-            message: "Ocurrió un error al momento obtener los productos"
-        })
-        console.log(error)
-    }
-}
-
-const getProductOrderAZ = async (req, res) =>{
-    const data = await prisma.products.findMany({        
-        orderBy: {
-            PRODUCT_NAME: 'asc'
-        }         
+        },
+        orderBy:{
+            PRODUCT_NAME: req.body.order_name
+        }
     })
     if (data[0] === undefined){
         res.status(400).send({
-            message: "No se encontraron productos relacionados"
+            message: "No se encontraron productos registrados"
         })
     }else if(data === null){
         res.status(400).send({
-            message: "No existen productos"
+            message: "El producto no existe"
         })
     }else{
         res.json(data)
-    }  
-}
-
-const getProductOrderZA = async (req, res) =>{
-    const data = await prisma.products.findMany({        
-        orderBy: {
-            PRODUCT_NAME: 'desc'
-        }         
-    })
-    if (data[0] === undefined){
-        res.status(400).send({
-            message: "No se encontraron productos relacionados"
-        })
-    }else if(data === null){
-        res.status(400).send({
-            message: "No existen productos"
-        })
-    }else{
-        res.json(data)
-    }  
+    }    
 }
 
 const getNameProducts = async (req, res) =>{    
@@ -97,14 +70,14 @@ const getNameProducts = async (req, res) =>{
         })        
         if(data === null){
             res.status(400).send({
-                message: "El paciente no existe"
+                message: "El producto no existe"
             })
         }else {
             res.json(data)
         }
     }catch(error){
         res.status(400).send({
-            message: "Ocurrio el error "+ error.code+ " al momento de registrar al paciente"
+            message: "Ocurrió el error "+ error.code+ " al momento de registrar el producto"
         })
     }        
 }
@@ -124,7 +97,7 @@ const updateProduct = async (req, res) =>{
             }
         })
         res.send({
-            message: "El producto se actualizo con exito"
+            message: "El producto se actualizó con éxito"
         })
     } catch (error) {
         res.send({
@@ -138,7 +111,5 @@ module.exports = {
     createProducts,
     getProduct,
     getNameProducts,
-    getProductOrderAZ,
-    getProductOrderZA,
     updateProduct
 }

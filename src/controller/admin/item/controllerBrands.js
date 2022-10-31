@@ -56,15 +56,30 @@ const updateBrand = async (req, res)=>{
 }
 
 const getBrand = async (req, res) =>{
-    try {
-        const data = await prisma.brands.findMany()
-        res.json(data)
-    } catch (error) {
-        res.send({
-            message: "Ocurrió un error al momento de obtener las marcas"
+    const data = await prisma.brands .findMany({
+        where:{
+            ID_BRAND:{
+                contains: req.body.id_brand
+            },
+            NAME_BRAND:{
+                contains: req.body.name_brand
+            }
+        },
+        orderBy:{
+            NAME_BRAND: req.body.order_name
+        }
+    })
+    if (data[0] === undefined){
+        res.status(400).send({
+            message: "No se encontraron marcas registradas"
         })
-        console.log(error)
-    }
+    }else if(data === null){
+        res.status(400).send({
+            message: "La marca no existe"
+        })
+    }else{
+        res.json(data)
+    }    
 }
 
 module.exports = {
