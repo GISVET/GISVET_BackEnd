@@ -11,7 +11,7 @@ router.post('/register', registerUser)
 
 //-------------------Rutas-----------------------
 
-router.use('/Admin', require('./admin/routesAdmin'))
+router.use('/Admin',verification ,require('./admin/routesAdmin'))
 router.use('/Users', require('./users/routesUsers'))
 
 //-------------------Verificar token --------------------
