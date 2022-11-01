@@ -87,7 +87,11 @@ const getPersons = async (req, res) =>{
             FULL_NAME: req.body.order_name
         }, 
         include:{
-            user_roles: true,
+            user_roles: {
+                include:{
+                    roles: true
+                }
+            },
             accounts: true,
             person_dependencies:{
                 include:{
@@ -100,12 +104,26 @@ const getPersons = async (req, res) =>{
 }
 
 const getIdPersons = async (req, res) =>{
-    const data = await prisma.persons.findUnique({
+    const data = await prisma.persons.findMany({
         where:{
-            ID_PERSON: req.body.id_person
+            ID_PERSON: req.body.id_person,
+            DOCUMENT: req.body.document
+        },
+        include:{
+            user_roles: {
+                include:{
+                    roles: true
+                }
+            },
+            accounts: true,
+            person_dependencies:{
+                include:{
+                    dependencies: true
+                }
+            }
         }
     })
-    res.json(data)
+    res.json(data[0])
 }
 
 const updatePersons = async (req, res) =>{
