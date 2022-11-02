@@ -7,7 +7,7 @@ const {createProductTracings, getProductTraicing} = require ('../../controller/a
 
 //---------------------Dependencies--------------------------------
 router.post('/createDependecie', createDependencie)
-router.get('/getDependencies', getDependencies)
+router.post('/getDependencies', getDependencies)
 router.post('/getIdDependencies', getIdDependencies)
 router.put('/updateDependecie', updateDependecie)
 
