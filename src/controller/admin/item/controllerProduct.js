@@ -35,12 +35,8 @@ const getProduct = async (req, res) =>{
             PRODUCT_NAME:{
                 contains: req.body.getNameProducts
             },
-            ID_PRODUCT:{
-                contains: req.body.id_product
-            },
-            ID_BRAND:{
-                contains: req.body.id_brand
-            }
+            ID_PRODUCT:req.body.id_product,
+            ID_BRAND:req.body.id_brand
         },
         orderBy:{
             PRODUCT_NAME: req.body.order_name
@@ -57,6 +53,28 @@ const getProduct = async (req, res) =>{
     }else{
         res.json(data)
     }    
+}
+
+const getItemProduct =  async (req, res) =>{
+    try{        
+        const data = await prisma.item .findMany({
+            select:{
+                products: true
+        }
+    })    
+        if (data[0] === undefined){
+            res.status(400).send({
+                message: "No se encuentra la dependencia ingresada"
+            })
+        }else{
+            res.json(data) 
+        }
+    } catch (error) {
+        res.send({
+            message: "Ocurrió un error al momento obtener los productos"
+        })
+        console.log(error)
+    }
 }
 
 const getNameProducts = async (req, res) =>{    
@@ -108,7 +126,7 @@ const updateProduct = async (req, res) =>{
 }
 
 module.exports = {
-    createProducts,
+    createProducts,getItemProduct,
     getProduct,
     getNameProducts,
     updateProduct
