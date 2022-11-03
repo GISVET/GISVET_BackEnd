@@ -19,7 +19,7 @@ model accounts {
 model brands {
   ID_BRAND   Int    @id
   NAME_BRAND String @unique(map: "BR_UQ_NO") @db.VarChar(50)
-  products products[]
+  product_brand product_brand[]
 }
 
 model clinic_histories {
@@ -108,13 +108,12 @@ model product_tracings {
 }
 
 model products {
-  ID_PRODUCT        Int    @id
-  brands    brands?   @relation(fields: [ID_BRAND], references: [ID_BRAND])
-  ID_BRAND          Int
+  ID_PRODUCT        Int    @id  
   PRODUCT_NAME      String @unique(map: "PR_UQ_PN") @db.VarChar(50)
   MEASUREMENT_UNITS String @db.Char(2)
   TYPE_PRODUCT      String @db.Char(2)
   item item[]
+  product_brand product_brand[]
 }
 
 model roles {
@@ -133,6 +132,14 @@ model user_roles {
   ID_PERSON Int
   STATE     String @db.Char(2)
   @@id([ID_ROL, ID_PERSON])
+}
+
+model product_brand{
+  brands    brands?   @relation(fields: [ID_BRAND], references: [ID_BRAND])
+  ID_BRAND          Int
+  products    products?   @relation(fields: [ID_PRODUCT], references: [ID_PRODUCT])
+  ID_PRODUCT          Int
+  @@id([ID_BRAND, ID_PRODUCT])
 }
 
 model person_dependencies {

@@ -61,9 +61,12 @@ const getItemProduct =  async (req, res) =>{
             include:{
                 products:{
                     include:{
-                        brands:true
-                    } 
-                    
+                        product_brand:{
+                            include:{
+                                brands: true
+                            }
+                        }
+                    }                     
                 },
                 feature_products:true,
             }
@@ -158,6 +161,7 @@ const updateProduct = async (req, res) =>{
 
 function formtJson(data){
     const json = []
+    console.log(data)
     for (let i = 0; i < data.length; i++) {
         const object= {
             ID_ITEM: data[i].ID_ITEM,
@@ -167,8 +171,8 @@ function formtJson(data){
             PRODUCT_NAME: data[i].products.PRODUCT_NAME,
             MEASUREMENT_UNITS: data[i].products.MEASUREMENT_UNITS,
             TYPE_PRODUCT: data[i].products.TYPE_PRODUCT,
-            ID_BRAND: data[i].products.brands.ID_BRAND,
-            NAME_BRAND: data[i].products.brands.NAME_BRAND            
+            PRODUCTS: data[i].products.product_brand,
+            // NAME_BRAND: data[i].products.product_brand.brand.NAME_BRAND = []? "vacío" : 33 
         }
         json[i]= object
     }
@@ -189,7 +193,8 @@ function formtJsonDependece(data){
 }
 
 module.exports = {
-    createProducts,getItemProduct,
+    createProducts,
+    getItemProduct,
     getProduct,
     getItemProductDepartment,
     getNameProducts,

@@ -24,6 +24,6 @@ router.get('/getProduct',getProduct)
 router.get('/getItemProductDepartment',getItemProductDepartment)
 router.get('/getNameProduct',getNameProducts)
 router.put('/updateProduct',updateProduct)
-router.get('/item', getItemProduct)
+router.get('/getItemProduct', getItemProduct)
 
 module.exports = router
