@@ -58,28 +58,14 @@ const getProduct = async (req, res) =>{
 const getItemProduct =  async (req, res) =>{
     try{        
         const data = await prisma.item .findMany({
-            select:{
-                ID_ITEM: true,
-                PRESENTATION: true, 
-                QUANTITY: true,
+            include:{
                 products:{
-                    select:{
-                        ID_PRODUCT:true,                        
-                        PRODUCT_NAME: true,
-                        MEASUREMENT_UNITS:true,
-                        TYPE_PRODUCT:true,
-                        brands: true
-                    }
-                }, 
-                feature_products:{
-                    select:{
-                        EXPIRATION_DATE:true, 
-                        QUANTITY_PER_UNIT:true, 
-                        PRICE_PER_UNIT:true, 
-                        INVIMA:true, 
-                        MANUFACTURING_DATE:true
-                    }
-                }
+                    include:{
+                        brands:true
+                    } 
+                    
+                },
+                feature_products:true,
             }
         })    
         if (data[0] === undefined){
@@ -104,7 +90,8 @@ const getItemProductDepartment = async (req, res) =>{
                 ID_ITEM: req.body.id_item
             }, 
             include: {
-                dependencies: true
+                dependencies: true, 
+                products: true
             }           
         })          
         if (data === null){
@@ -191,6 +178,7 @@ function formtJson(data){
 function formtJsonDependece(data){
     const object= {
         ID_ITEM: data.ID_ITEM,
+        PRODUCT_NAME: data.products.PRODUCT_NAME,
         PRESENTATION: data.PRESENTATION, 
         QUANTITY: data.QUANTITY,
         ID_DEPENDENCIE: data.ID_DEPENDENCIE,
