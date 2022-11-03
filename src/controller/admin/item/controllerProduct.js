@@ -58,27 +58,14 @@ const getProduct = async (req, res) =>{
 const getItemProduct =  async (req, res) =>{
     try{        
         const data = await prisma.item .findMany({
-            select:{
-                PRESENTATION: true, 
-                QUANTITY: true,
+            include:{
                 products:{
-                    select:{
-                        ID_PRODUCT:true,                        
-                        PRODUCT_NAME: true,
-                        MEASUREMENT_UNITS:true,
-                        TYPE_PRODUCT:true,
-                        brands: true
-                    }
-                }, 
-                feature_products:{
-                    select:{
-                        EXPIRATION_DATE:true, 
-                        QUANTITY_PER_UNIT:true, 
-                        PRICE_PER_UNIT:true, 
-                        INVIMA:true, 
-                        MANUFACTURING_DATE:true
-                    }
-                }
+                    include:{
+                        brands:true
+                    } 
+                    
+                },
+                feature_products:true,
             }
         })    
         if (data[0] === undefined){
@@ -86,7 +73,7 @@ const getItemProduct =  async (req, res) =>{
                 message: "No se encuentra la dependencia ingresada"
             })
         }else{
-            res.json(data) 
+            res.json(formtJson(data)) 
         }
     } catch (error) {
         res.send({
@@ -95,6 +82,32 @@ const getItemProduct =  async (req, res) =>{
         console.log(error)
     }
 }
+
+const getItemProductDepartment = async (req, res) =>{ 
+    try{
+        const data = await prisma.item .findUnique({
+            where:{
+                ID_ITEM: req.body.id_item
+            }, 
+            include: {
+                dependencies: true, 
+                products: true
+            }           
+        })          
+        if (data === null){
+            res.status(400).send({
+                message: "No se encuentra el item ingresado"
+            })
+        }else{
+            res.json(formtJsonDependece(data)) 
+        }
+    }catch (error) {
+        res.send({
+            message: "Ocurrió un error al momento obtener los productos"
+        })
+        console.log(error)
+    }
+} 
 
 const getNameProducts = async (req, res) =>{    
     try{
@@ -118,7 +131,6 @@ const getNameProducts = async (req, res) =>{
         })
     }        
 }
-
 
 const updateProduct = async (req, res) =>{
     try {
@@ -144,9 +156,42 @@ const updateProduct = async (req, res) =>{
     }
 }
 
+function formtJson(data){
+    const json = []
+    for (let i = 0; i < data.length; i++) {
+        const object= {
+            ID_ITEM: data[i].ID_ITEM,
+            PRESENTATION: data[i].PRESENTATION,
+            QUANTITY: data[i].QUANTITY,
+            ID_PRODUCT: data[i].products.ID_PRODUCT,
+            PRODUCT_NAME: data[i].products.PRODUCT_NAME,
+            MEASUREMENT_UNITS: data[i].products.MEASUREMENT_UNITS,
+            TYPE_PRODUCT: data[i].products.TYPE_PRODUCT,
+            ID_BRAND: data[i].products.brands.ID_BRAND,
+            NAME_BRAND: data[i].products.brands.NAME_BRAND            
+        }
+        json[i]= object
+    }
+    return json
+}
+
+function formtJsonDependece(data){
+    const object= {
+        ID_ITEM: data.ID_ITEM,
+        PRODUCT_NAME: data.products.PRODUCT_NAME,
+        PRESENTATION: data.PRESENTATION, 
+        QUANTITY: data.QUANTITY,
+        ID_DEPENDENCIE: data.ID_DEPENDENCIE,
+        DEPENDENCIE_NAME: data.dependencies.DEPENDENCIE_NAME,
+        TYPE_DEPENDENCIE: data.dependencies.TYPE_DEPENDENCIE          
+    }
+    return object
+}
+
 module.exports = {
     createProducts,getItemProduct,
     getProduct,
+    getItemProductDepartment,
     getNameProducts,
     updateProduct
 }
