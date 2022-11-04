@@ -82,7 +82,7 @@ model persons {
   ID_PERSON       Int    @id @default(autoincrement())
   FULL_NAME       String @db.VarChar(50)
   DOCUMENT_TYPE   String @db.Char(2)
-  DOCUMENT        String @db.VarChar(20)
+  DOCUMENT        String @db.VarChar(20) @unique(map: "PE_UQ_DOC")
   GENDER          String @db.Char(2)
   STATE           String @db.Char(2)
   PROFESSIONAL_ID String @db.VarChar(20) @default("null")  

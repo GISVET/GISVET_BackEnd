@@ -20,7 +20,7 @@ router.put('/updateFeatureProduct',updateFeatureProduct)
 // --------------------------- Product ----------------------
 
 router.post('/createProducts',createProducts)
-router.get('/getProduct',getProduct)
+router.post('/getProduct',getProduct)
 router.get('/getItemProductDepartment',getItemProductDepartment)
 router.get('/getNameProduct',getNameProducts)
 router.put('/updateProduct',updateProduct)

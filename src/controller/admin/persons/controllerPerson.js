@@ -76,11 +76,17 @@ const createPersonAll = async (req, res) =>{
 }
 
 const getPersons = async (req, res) =>{
+    const value = req.body.value
+    console.log(parseInt(value) )
+    console.log(parseInt(value).toString() === "NaN"? value: undefined)
     const data = await prisma.persons.findMany({
         where : {
             STATE: "AC",
             FULL_NAME:{
-                contains: req.body.name_person
+                contains: parseInt(value).toString() === "NaN"? value: undefined
+            },
+            DOCUMENT:{
+                contains: parseInt(value).toString() !== "NaN"? value: undefined
             }
         },
         orderBy: {
