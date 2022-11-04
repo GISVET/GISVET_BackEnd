@@ -112,27 +112,47 @@ const getItemProductDepartment = async (req, res) =>{
     }
 } 
 
-const getNameProducts = async (req, res) =>{    
+const getSpecificProduct = async (req, res) =>{      
     try{
-        const data = await prisma.products .findMany({
+        const data = await prisma.products.findUnique({
             where: {
-                PRODUCT_NAME: {
-                    contains: req.body.product_name
+                ID_PRODUCT: req.body.id_product
+            },
+            select:{
+                PRODUCT_NAME: true,
+                MEASUREMENT_UNITS: true,
+                TYPE_PRODUCT: true,
+                product_brand:{
+                    select:{
+                        brands:{
+                            select:{
+                                NAME_BRAND: true
+                            }
+                        }
+                    }
+                },
+                item:{
+                    select:{
+                        PRESENTATION: true,
+                        QUANTITY: true,
+                        feature_products:true
+                    }
                 }
             }
-        })        
+        })      
         if(data === null){
             res.status(400).send({
                 message: "El producto no existe"
             })
-        }else {
-            res.json(data)
+        }else {            
+            res.json(formtJsonSpecific(data))
         }
     }catch(error){
         res.status(400).send({
             message: "Ocurrió el error "+ error.code+ " al momento de registrar el producto"
         })
-    }        
+    } 
+           
 }
 
 const updateProduct = async (req, res) =>{
@@ -161,7 +181,6 @@ const updateProduct = async (req, res) =>{
 
 function formtJson(data){
     const json = []
-    console.log(data)
     for (let i = 0; i < data.length; i++) {
         const object= {
             ID_ITEM: data[i].ID_ITEM,
@@ -171,8 +190,7 @@ function formtJson(data){
             PRODUCT_NAME: data[i].products.PRODUCT_NAME,
             MEASUREMENT_UNITS: data[i].products.MEASUREMENT_UNITS,
             TYPE_PRODUCT: data[i].products.TYPE_PRODUCT,
-            PRODUCTS: data[i].products.product_brand,
-            // NAME_BRAND: data[i].products.product_brand.brand.NAME_BRAND = []? "vacío" : 33 
+            PRODUCTS: data[i].products.product_brand
         }
         json[i]= object
     }
@@ -192,11 +210,27 @@ function formtJsonDependece(data){
     return object
 }
 
+function formtJsonSpecific(data){
+    console.log(data)
+    const brands = []
+    for (let i = 0; i <data.product_brand.length; i++) {
+        brands[i] = data.product_brand[i].brands.NAME_BRAND
+    }
+    const object= {
+        PRODUCT_NAME: data.PRODUCT_NAME,
+        MEASUREMENT_UNITS: data.MEASUREMENT_UNITS,
+        TYPE_PRODUCT: data.TYPE_PRODUCT,   
+        BRANS: brands, 
+        LOTES: data.item
+    }
+    return object
+}
+
 module.exports = {
     createProducts,
     getItemProduct,
     getProduct,
     getItemProductDepartment,
-    getNameProducts,
+    getSpecificProduct,
     updateProduct
 }
