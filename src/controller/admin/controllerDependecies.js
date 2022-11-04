@@ -44,6 +44,27 @@ const getDependencies = async (req, res) =>{
     }    
 }
 
+const createDependencieUser = async (req, res) =>{
+    try {
+        await prisma.person_dependencies.create({
+            data:{
+                ID_PERSON : req.body.id_person,
+                ID_DEPENDENCIE : req.body.id_dependencie,
+                STATE : "AC",
+                DATE_PERSON_DEPENDENCIES: new Date(new Date()-3600*1000*5).toISOString()
+            }
+        })
+        res.send({
+            message: "Dependiencia asignada correctamente"
+        });
+    } catch (error) {
+        res.send({
+            message: "Ocurrio un error al momento de asignar una dependecia"
+        });
+        console.log(error)
+    }
+}
+
 const getIdDependencies = async (req, res) =>{
     const data = await prisma.dependencies.findUnique({
         where:{
@@ -93,5 +114,6 @@ module.exports = {
     createDependencie,
     getDependencies,
     getIdDependencies,
-    updateDependecie
+    updateDependecie,
+    createDependencieUser
 }
