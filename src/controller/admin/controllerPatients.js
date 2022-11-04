@@ -1,8 +1,7 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
 
-const createPatient = async (req, res) =>{
-    
+const createPatient = async (req, res) =>{    
     try{
         await prisma.clinic_histories .create({
             data:{
@@ -15,11 +14,11 @@ const createPatient = async (req, res) =>{
         });
     }catch (error) {
         if(error.code === undefined){
-        res.send({
-            message: "Ocurrio un error al momento de registrar al paciente"
-        });
+            res.status(400).send({
+                message: "Ocurrió un error al registrar al paciente"
+            })
     }else{
-        res.send({
+        res.status(400).send({
             message: "Ocurrio el error "+ error.code+ " al momento de registrar al paciente"
         });  
     }
@@ -128,7 +127,7 @@ const getNamePatient = async (req, res) =>{
 
 const updatePatient = async (req, res) =>{ 
     try{
-        await prisma.clinic_histories.update({
+        const info = await prisma.clinic_histories.update({
             where: {
                 ID_CLINIC_HISTORY: req.body.id_clinic_history
             },
@@ -139,11 +138,11 @@ const updatePatient = async (req, res) =>{
         })
         res.send({
             message: "El paciente ha sido actualizado con éxito."
-        });
+        })
     }catch (error) {
         console.log(error)
         res.status(400).send({
-            message: "Ocurrio un error"
+            message: "Ocurrio un error al actualizar la información del paciente"
         })
     }       
 }

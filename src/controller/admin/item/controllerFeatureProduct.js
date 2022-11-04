@@ -52,11 +52,6 @@ const getFeatureProducts = async (req, res) =>{
     }    
 }
 
-
-const getInvimaFeatureProduct = async (req, res) =>{
-
-}
-
 const updateFeatureProduct = async (req, res) =>{
     try {
         await prisma.feature_products.update({
