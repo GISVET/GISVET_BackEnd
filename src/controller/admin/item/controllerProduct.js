@@ -55,7 +55,7 @@ const getProduct = async (req, res) =>{
             res.json(formtGetProductJson(data))
         }
    } catch (error) {
-        res.send({
+        res.status(400).send({
             message: "Ocurrió un error al momento obtener los productos"
         })
         console.log(error)
