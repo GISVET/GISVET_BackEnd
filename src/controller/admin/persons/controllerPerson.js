@@ -18,6 +18,15 @@ const createPersons = async (req, res) =>{
             message: "Persona creada con éxito"
         });
     } catch (error) {
+        if(error.code === undefined){
+            res.send({
+                message: "Ocurrió un error al momento de crear a la persona"
+            });
+        }else{
+            res.send({
+                message: "Ocurrió el error al momento de crear a la persona"
+            });  
+        }
         console.log(error)
     }
 }
