@@ -13,7 +13,7 @@ router.put('/updateBrand',updateBrand)
 
 // ------------------------ FeatureProducts --------------------------------
 
-router.get('/getFeatureProduct',getFeatureProducts)
+router.post('/getFeatureProduct',getFeatureProducts)
 router.post('/createFeatureProducts',createFeatureProducts)
 router.put('/updateFeatureProduct',updateFeatureProduct)
 
