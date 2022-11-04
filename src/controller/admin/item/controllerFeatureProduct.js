@@ -3,7 +3,7 @@ const prisma = new PrismaClient()
 
 const createFeatureProducts = async (req, res) =>{
     try {
-        await prisma.feature_products.create({
+        const info = await prisma.feature_products.create({
             data:{
                 EXPIRATION_DATE : new Date (req.body.expiration_date),
                 QUANTITY_PER_UNIT: req.body.quantity_per_unit,
@@ -12,17 +12,15 @@ const createFeatureProducts = async (req, res) =>{
                 MANUFACTURING_DATE: new Date (req.body.manufacturing_date)
             }
         })
-        res.send({
-            message: "Característica creada con exito"
-        });
+        res.json(info)        
     } catch (error) {
         if(error.code === undefined){
             res.send({
-                message: "Ocurrio un error al momento de crear la caracteristica"
+                message: "Ocurrió un error al momento de crear la característica"
             });
         }else{
             res.send({
-                message: "Ocurrio el error "+error.code+ " al momento de crear la característica"
+                message: "Ocurrió el error "+error.code+ " al momento de crear la característica"
             });  
         }
         console.log(error)
@@ -30,7 +28,7 @@ const createFeatureProducts = async (req, res) =>{
 }
 
 const getFeatureProducts = async (req, res) =>{
-    const data = await prisma.feature_products .findMany({
+    const data = await prisma.feature_products.findMany({
         where:{
             EXPIRATION_DATE : req.body.expiration_date,
             QUANTITY_PER_UNIT: req.body.quantity_per_unit,
@@ -52,6 +50,11 @@ const getFeatureProducts = async (req, res) =>{
     }else{
         res.json(data)
     }    
+}
+
+
+const getInvimaFeatureProduct = async (req, res) =>{
+
 }
 
 const updateFeatureProduct = async (req, res) =>{
