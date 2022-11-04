@@ -115,7 +115,7 @@ const registerUser = async (req, res) => {
             data: {
                 EMAIL: user,
                 PASSWORD_ACCOUNT: await encrypt(password),
-                STATE: "A",
+                STATE: "AC",
                 ID_PERSON: req.body.id_person
             }
         })
@@ -125,8 +125,39 @@ const registerUser = async (req, res) => {
     }    
 }
 
+const updateUser = async (req, res) => {
+    try {
+        const user = req.body.email
+        const password = req.body.password_account
+        
+        if(password.length < 8 ) {
+            res.send({message: "La contraseña debe tener minimo 8 caracteres"}) 
+            return
+        }else{
+            await prisma.accounts.update({
+                where:{
+                    EMAIL: user
+                },
+                data: {
+                    EMAIL: req.body.email_new,
+                    PASSWORD_ACCOUNT: await encrypt(password)
+                }
+            })
+            res.send({
+                message: "Usuario Actualizado con exito."
+            })
+        } 
+    } catch (error) {
+        res.status(400).send({
+            message: "Ocurrió un error al momento actualizar el usuario"
+        })
+        console.log(error)
+    }   
+}
+
 module.exports = {
     loginUser,
     registerUser,
-    changeRol
+    changeRol,
+    updateUser
 }

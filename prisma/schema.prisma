@@ -9,11 +9,11 @@ datasource db {
 
 model accounts {
   ID_ACCOUNTS      Int    @id @default(autoincrement())
-  EMAIL            String @db.VarChar(50)
+  EMAIL            String @db.VarChar(50) @unique(map: "ACC_UQ_EMA")
   PASSWORD_ACCOUNT String @db.VarChar(100)
   STATE            String @db.Char(2)
   persons          persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
-  ID_PERSON        Int
+  ID_PERSON        Int @unique(map: "ACC_UQ_IDP")
 }
 
 model brands {
