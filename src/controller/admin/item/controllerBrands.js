@@ -58,9 +58,7 @@ const updateBrand = async (req, res)=>{
 const getBrand = async (req, res) =>{
     const data = await prisma.brands .findMany({
         where:{
-            ID_BRAND:{
-                contains: req.body.id_brand
-            },
+            ID_BRAND:req.body.id_brand,
             NAME_BRAND:{
                 contains: req.body.name_brand
             }

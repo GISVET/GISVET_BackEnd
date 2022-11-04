@@ -44,12 +44,44 @@ const createItem = async (req, res) =>{
 
 const assingItem = async (req, res) =>{
     try {
+        const idBrand =  req.body.id_brand
+        const nameBrand = req.body.name_brand
+        const product = req.body.id_product
+
+        const data = await prisma.brands.findUnique({
+            where:{
+                ID_BRAND: idBrand
+            }
+        })
+
+        if (data === null){
+            await prisma.brands.create({
+                data:{
+                    ID_BRAND: idBrand,
+                    NAME_BRAND: nameBrand
+                }
+            })
+            await prisma.product_brand.create({
+                data:{
+                    ID_BRAND: idBrand,
+                    ID_PRODUCT: product,
+                }       
+            })
+
+        }else{
+            await prisma.product_brand.create({
+                data:{
+                    ID_BRAND: idBrand,
+                    ID_PRODUCT: product,
+                }       
+            })
+        }
 
         await prisma.item.create({
             data:{
                 PRESENTATION: req.body.presentation,
                 QUANTITY: req.body.quantity,
-                ID_PRODUCT: req.body.id_product,
+                ID_PRODUCT: product,
                 ID_FEATURE: req.body.id_feature,
                 ID_DEPENDENCIE: req.body.id_dependencie
             }
