@@ -158,8 +158,7 @@ const getSpecificProduct = async (req, res) =>{
         res.status(400).send({
             message: "Ocurrió el error "+ error.code+ " al momento de registrar el producto"
         })
-    } 
-           
+    }            
 }
 
 const updateProduct = async (req, res) =>{
