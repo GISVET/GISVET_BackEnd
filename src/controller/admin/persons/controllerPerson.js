@@ -76,31 +76,42 @@ const createPersonAll = async (req, res) =>{
 }
 
 const getPersons = async (req, res) =>{
-    const data = await prisma.persons.findMany({
-        where : {
-            STATE: "AC",
-            FULL_NAME:{
-                contains: req.body.name_person
-            }
-        },
-        orderBy: {
-            FULL_NAME: req.body.order_name
-        }, 
-        include:{
-            user_roles: {
-                include:{
-                    roles: true
+    try {
+        const value = req.body.value
+        const data = await prisma.persons.findMany({
+            where : {
+                STATE: "AC",
+                FULL_NAME:{
+                    contains: parseInt(value).toString() === "NaN"? value: undefined
+                },
+                DOCUMENT:{
+                    contains: parseInt(value).toString() !== "NaN"? value: undefined
                 }
             },
-            accounts: true,
-            person_dependencies:{
-                include:{
-                    dependencies: true
+            orderBy: {
+                FULL_NAME: req.body.order_name
+            }, 
+            include:{
+                user_roles: {
+                    include:{
+                        roles: true
+                    }
+                },
+                accounts: true,
+                person_dependencies:{
+                    include:{
+                        dependencies: true
+                    }
                 }
             }
-        }
-    })
-    res.json(data) 
+        })
+        res.json(data)
+    } catch (error) {
+        res.status(400).send({
+            message: "Ocurrió un error al momento obtener los usuarios"
+        })
+        console.log(error)
+    } 
 }
 
 const getIdPersons = async (req, res) =>{

@@ -6,7 +6,6 @@ const createProducts = async (req, res) =>{
         await prisma.products.create({
             data:{
                 ID_PRODUCT: req.body.id_product,
-                ID_BRAND: req.body.id_brand,
                 PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
                 MEASUREMENT_UNITS: req.body.measurement_units,
                 TYPE_PRODUCT: req.body.type_product,
@@ -30,29 +29,37 @@ const createProducts = async (req, res) =>{
 }
 
 const getProduct = async (req, res) =>{
-    const data = await prisma.products .findMany({
-        where:{
-            PRODUCT_NAME:{
-                contains: req.body.getNameProducts
+   try {
+        const valueName = typeof(req.body.value) === "string"? req.body.value: undefined
+        const valueId = typeof(req.body.value) === "number"? req.body.value: undefined
+        const data = await prisma.products .findMany({
+            where:{
+                PRODUCT_NAME:{
+                    contains: valueName
+                },
+                ID_PRODUCT: valueId
             },
-            ID_PRODUCT:req.body.id_product,
-            ID_BRAND:req.body.id_brand
-        },
-        orderBy:{
-            PRODUCT_NAME: req.body.order_name
+            orderBy:{
+                PRODUCT_NAME: req.body.order_name
+            }
+        })
+        if (data[0] === undefined){
+            res.status(400).send({
+                message: "No se encontraron productos registrados"
+            })
+        }else if(data === null){
+            res.status(400).send({
+                message: "El producto no existe"
+            })
+        }else{
+            res.json(formtGetProductJson(data))
         }
-    })
-    if (data[0] === undefined){
+   } catch (error) {
         res.status(400).send({
-            message: "No se encontraron productos registrados"
+            message: "Ocurrió un error al momento obtener los productos"
         })
-    }else if(data === null){
-        res.status(400).send({
-            message: "El producto no existe"
-        })
-    }else{
-        res.json(data)
-    }    
+        console.log(error)
+   }    
 }
 
 const getItemProduct =  async (req, res) =>{
@@ -194,6 +201,16 @@ function formtJson(data){
         }
         json[i]= object
     }
+    return json
+}
+
+function formtGetProductJson(data){
+    const json = []
+    const objt = {
+        products: data,
+        size: data.length
+    }
+    json[0]= objt
     return json
 }
 
