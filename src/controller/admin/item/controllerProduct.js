@@ -39,6 +39,9 @@ const getProduct = async (req, res) =>{
                 },
                 ID_PRODUCT: valueId
             },
+            include:{
+                item: true
+            },
             orderBy:{
                 PRODUCT_NAME: req.body.order_name
             }
@@ -205,13 +208,33 @@ function formtJson(data){
 
 function formtGetProductJson(data){
     const json = []
+    const aux = []
+    for (let i = 0; i < data.length; i++) {
+        let obj = {
+            ID_PRODUCT: data[i].ID_PRODUCT,
+            PRODUCT_NAME: data[i].PRODUCT_NAME,
+            MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
+            TYPE_PRODUCT: data[i].TYPE_PRODUCT,
+            TOTAL_PRODUCT: countTotalProduct(data[i].item)
+        }
+        aux[i] = obj
+    }
     const objt = {
-        products: data,
+        products: aux,
         size: data.length
     }
     json[0]= objt
     return json
 }
+
+function countTotalProduct(data){
+    let aux = 0
+    for (let i = 0; i < data.length; i++) {
+        aux += data[i].QUANTITY
+    }
+    return aux
+}
+
 
 function formtJsonDependece(data){
     const object= {
