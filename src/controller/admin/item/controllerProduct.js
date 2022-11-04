@@ -5,7 +5,6 @@ const createProducts = async (req, res) =>{
     try {
         await prisma.products.create({
             data:{
-                ID_PRODUCT: req.body.id_product,
                 PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
                 MEASUREMENT_UNITS: req.body.measurement_units,
                 TYPE_PRODUCT: req.body.type_product,

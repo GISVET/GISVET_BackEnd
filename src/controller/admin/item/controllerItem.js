@@ -5,7 +5,6 @@ const createItem = async (req, res) =>{
     try {
         const product = await prisma.products.create({
             data:{
-                ID_PRODUCT: req.body.id_product,
                 PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
                 MEASUREMENT_UNITS: req.body.measurement_units,
                 TYPE_PRODUCT: req.body.type_product
@@ -31,10 +30,9 @@ const createItem = async (req, res) =>{
                 ID_DEPENDENCIE: req.body.id_dependencie
             }
         })
-        console.log(product)
-        // res.send({
-        //     message: "Item creado con éxito"
-        // });
+        res.send({
+            message: "Item creado con éxito"
+        });
     } catch (error) {
         res.send({
             message: "Ocurrió un error al momento de crear el item"
@@ -58,7 +56,6 @@ const assingItem = async (req, res) =>{
         if (data === null){
             await prisma.brands.create({
                 data:{
-                    ID_BRAND: idBrand,
                     NAME_BRAND: nameBrand
                 }
             })
