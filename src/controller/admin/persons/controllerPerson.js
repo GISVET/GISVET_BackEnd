@@ -19,13 +19,13 @@ const createPersons = async (req, res) =>{
         });
     } catch (error) {
         if(error.code === undefined){
-            res.send({
-                message: "Ocurrió un error al momento de crear a la persona"
-            });
+            res.status(400).send({
+                message: "Ocurrió un error al crear a la persona ingresada"
+            })
         }else{
-            res.send({
-                message: "Ocurrió el error al momento de crear a la persona"
-            });  
+            res.status(400).send({
+                message: "Ocurrió un error al crear a la persona ingresada"
+            }) 
         }
         console.log(error)
     }
@@ -76,10 +76,19 @@ const createPersonAll = async (req, res) =>{
                 }
             })
             res.send({
-                message: "Usuario registrado con exito."
+                message: "Usuario registrado con éxito."
             })
         } 
     } catch (error) {
+        if(error.code === undefined){
+            res.status(400).send({
+                message: "Ocurrió un error al crear a la persona ingresada"
+            })
+        }else{
+            res.status(400).send({
+                message: "Ocurrió un error al crear a la persona ingresada"
+            }) 
+        }
         console.log(error)
     }
 }
@@ -124,47 +133,88 @@ const getPersons = async (req, res) =>{
 }
 
 const getIdPersons = async (req, res) =>{
-    const data = await prisma.persons.findMany({
-        where:{
-            ID_PERSON: req.body.id_person,
-            DOCUMENT: req.body.document
-        },
-        include:{
-            user_roles: {
-                include:{
-                    roles: true
-                }
+    try{
+        const data = await prisma.persons.findMany({
+            where:{
+                ID_PERSON: req.body.id_person,
+                DOCUMENT: req.body.document
             },
-            accounts: true,
-            person_dependencies:{
-                include:{
-                    dependencies: true
+            include:{
+                user_roles: {
+                    include:{
+                        roles: true
+                    }
+                },
+                accounts: true,
+                person_dependencies:{
+                    include:{
+                        dependencies: true
+                    }
                 }
             }
+        })
+        res.json(data[0])
+
+    }catch (error) {
+        if(error.code === undefined){
+            res.status(400).send({
+                message: "Ocurrió un error al obtener la persona solicitada"
+            })
+        }else{
+            res.status(400).send({
+                message: "Ocurrió un error al obtener la persona solicitada"
+            }) 
         }
-    })
-    res.json(data[0])
+        console.log(error)
+    }
 }
 
 const updatePersons = async (req, res) =>{
-    await prisma.persons.update({
-        where: {
-            ID_PERSON: req.body.id_person
-        },
-        data: {
-            FULL_NAME: req.body.full_name.charAt(0).toUpperCase() + req.body.full_name.slice(1),
-            DOCUMENT_TYPE: req.body.document_type,
-            DOCUMENT: req.body.document,
-            GENDER: req.body.gender,
-            PROFESSIONAL_ID: req.body.professional_id
+    try{
+        await prisma.persons.update({
+            where: {
+                ID_PERSON: req.body.id_person
+            },
+            data: {
+                FULL_NAME: req.body.full_name.charAt(0).toUpperCase() + req.body.full_name.slice(1),
+                DOCUMENT_TYPE: req.body.document_type,
+                DOCUMENT: req.body.document,
+                GENDER: req.body.gender,
+                PROFESSIONAL_ID: req.body.professional_id
+            }
+        })
+        res.send({
+            message: "Persona actualizada con éxito."
+        });
+    }catch (error) {
+        if(error.code === undefined){
+            res.status(400).send({
+                message: "Ocurrió un error al actualizar al usuario"
+            })
+        }else{
+            res.status(400).send({
+                message:  "Ocurrió un error al actualizar al usuario"
+            }) 
         }
-    })
-    res.send({
-        message: "Persona actualizada con éxito."
-    });
+        console.log(error)
+    }
 }
 
 const deletePersons = async (req, res) =>{
+    try{
+
+    }catch (error) {
+        if(error.code === undefined){
+            res.status(400).send({
+                message: "Ocurrió un error al eliminar el usuario"
+            })
+        }else{
+            res.status(400).send({
+                message:  "Ocurrió un error al eliminar el usuario"
+            }) 
+        }
+        console.log(error)
+    }
     await prisma.persons.update({
         where: {
             ID_PERSON: req.body.id_person
