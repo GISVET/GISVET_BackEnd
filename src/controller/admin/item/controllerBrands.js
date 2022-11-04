@@ -6,7 +6,6 @@ const createBrand = async (req, res) =>{
     try {
         await prisma.brands.create({
             data:{
-                ID_BRAND: req.body.id_brand,
                 NAME_BRAND: req.body.name_brand.charAt(0).toUpperCase() + req.body.name_brand.slice(1)
             }
         })
