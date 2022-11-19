@@ -12,6 +12,7 @@ model accounts {
   EMAIL            String @db.VarChar(50) @unique(map: "ACC_UQ_EMA")
   PASSWORD_ACCOUNT String @db.VarChar(100)
   STATE            String @db.Char(2)
+  TEM_TOKEN        String @db.VarChar(1000)
   persons          persons?   @relation(fields: [ID_PERSON], references: [ID_PERSON])
   ID_PERSON        Int @unique(map: "ACC_UQ_IDP")
 }
@@ -44,18 +45,20 @@ model feature_products {
   PRICE_PER_UNIT     Int
   INVIMA             String    @db.VarChar(50)
   MANUFACTURING_DATE DateTime? @db.Date
+  ID_BOX             String    @db.VarChar(50)
+  STATE              String @db.Char(2)
   item item[]
 }
 
 model history_item {
+  ID_HISTORY_ITEM       Int    @id @default(autoincrement())
+  DATE_HISTORY_ITEM DateTime? @default(now()) @db.Timestamp(0)
+  QUANTITY          Int
+  ID_USER           Int
   item              item?   @relation(fields: [ID_ITEM], references: [ID_ITEM])
   ID_ITEM           Int
   dependencies      dependencies?   @relation(fields: [ID_DEPENDENCIE], references: [ID_DEPENDENCIE]) 
   ID_DEPENDENCIE     Int
-  DATE_HISTORY_ITEM DateTime? @default(now()) @db.Timestamp(0)
-  QUANTITY          Int
-  ID_USER           Int
-  @@id([ID_ITEM, ID_DEPENDENCIE])
 }
 
 model history_user {
