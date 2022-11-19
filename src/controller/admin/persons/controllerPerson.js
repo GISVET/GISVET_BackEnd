@@ -153,8 +153,13 @@ const getIdPersons = async (req, res) =>{
                 }
             }
         })
-        res.json(data[0])
-
+        if(data[0] === undefined){
+            res.status(400).send({
+                message: "El usuario no existe"
+            })
+        }else{
+            res.json(data[0])
+        } 
     }catch (error) {
         if(error.code === undefined){
             res.status(400).send({
