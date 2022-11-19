@@ -28,6 +28,11 @@ const loginUser = async (req, res) => {
                             include:{
                                 roles: true
                             }
+                        }, 
+                        person_dependencies:{
+                            include:{
+                                dependencies:true
+                            }
                         }
                     }
                 })
@@ -38,7 +43,10 @@ const loginUser = async (req, res) => {
                         PASSWORD_ACCOUNT : verify[0].PASSWORD_ACCOUNT,
                         STATE : verify[0].STATE,
                         ID_PERSON : verify[0].ID_PERSON,
-                        NAME_ROL: person.user_roles[0].roles.NAME_ROL
+                        NAME_ROL: person.user_roles[0].roles.NAME_ROL,
+                        ID_DEPENDECIE:person.person_dependencies[0].dependencies.DEPENDENCIE_NAME,
+                        DEPENDECIE_NAME:person.person_dependencies[0].ID_DEPENDENCIE,
+                        DEPENDECIE_TYPE:person.person_dependencies[0].dependencies.TYPE_DEPENDENCIE
                     }
                 ]
                 jwt.sign({object},object[0].NAME_ROL,(error,token)=>{
