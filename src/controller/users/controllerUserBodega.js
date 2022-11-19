@@ -70,3 +70,5 @@ function formtJson(data){
 module.exports = {
     getProductBodega
 }
+
+// prueba
