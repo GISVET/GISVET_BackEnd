@@ -17,7 +17,9 @@ const createItem = async (req, res) =>{
                 QUANTITY_PER_UNIT: req.body.quantity_per_unit,
                 PRICE_PER_UNIT: req.body.price_per_unit,
                 INVIMA: req.body.invima,
-                MANUFACTURING_DATE: new Date (req.body.manufacturing_date)                           
+                MANUFACTURING_DATE: new Date (req.body.manufacturing_date),
+                ID_BOX: req.body.id_box,
+                STATE: "AC"
             }
         })
 
@@ -81,7 +83,9 @@ const assingItem = async (req, res) =>{
                 QUANTITY_PER_UNIT: req.body.quantity_per_unit,
                 PRICE_PER_UNIT: req.body.price_per_unit,
                 INVIMA: req.body.invima,
-                MANUFACTURING_DATE: new Date (req.body.manufacturing_date)                           
+                MANUFACTURING_DATE: new Date (req.body.manufacturing_date),
+                ID_BOX: req.body.id_box,
+                STATE: "AC"                           
             }
         })
 
