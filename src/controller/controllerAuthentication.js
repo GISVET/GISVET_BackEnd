@@ -44,11 +44,20 @@ const loginUser = async (req, res) => {
                         STATE : verify[0].STATE,
                         ID_PERSON : verify[0].ID_PERSON,
                         NAME_ROL: person.user_roles[0].roles.NAME_ROL,
-                        ID_DEPENDECIE:person.person_dependencies[0].dependencies.DEPENDENCIE_NAME,
-                        DEPENDECIE_NAME:person.person_dependencies[0].ID_DEPENDENCIE,
-                        DEPENDECIE_TYPE:person.person_dependencies[0].dependencies.TYPE_DEPENDENCIE
+                        DEPENDECIES:[]
+                        
                     }
                 ]
+                let arrayAux =[]
+                person.person_dependencies.map((dependencie)=>{
+                    arrayAux.push({
+                        ID_DEPENDECIE:dependencie.dependencies.ID_DEPENDENCIE,
+                        DEPENDECIE_NAME:dependencie.dependencies.DEPENDENCIE_NAME,
+                        DEPENDECIE_TYPE:dependencie.dependencies.TYPE_DEPENDENCIE
+                    })
+                })
+                object[0].DEPENDECIES = arrayAux
+                console.log(object)
                 jwt.sign({object},object[0].NAME_ROL,(error,token)=>{
                     console.log(parseJwt(token))
                     res.json({
@@ -94,6 +103,11 @@ const changeRol = async (req, res) => {
                 include:{
                     roles: true
                 }
+            }, 
+            person_dependencies:{
+                include:{
+                    dependencies:true
+                }
             }
         }
     })
@@ -106,9 +120,20 @@ const changeRol = async (req, res) => {
                     PASSWORD_ACCOUNT : verify[0].PASSWORD_ACCOUNT,
                     STATE : verify[0].STATE,
                     ID_PERSON : verify[0].ID_PERSON,
-                    NAME_ROL: rol
+                    NAME_ROL: person.user_roles[0].roles.NAME_ROL,
+                    DEPENDECIES:[]
+                    
                 }
             ]
+            let arrayAux =[]
+            person.person_dependencies.map((dependencie)=>{
+                arrayAux.push({
+                    ID_DEPENDECIE:dependencie.dependencies.ID_DEPENDENCIE,
+                    DEPENDECIE_NAME:dependencie.dependencies.DEPENDENCIE_NAME,
+                    DEPENDECIE_TYPE:dependencie.dependencies.TYPE_DEPENDENCIE
+                })
+            })
+            object[0].DEPENDECIES = arrayAux
             jwt.sign({object},object[0].NAME_ROL,(error,token)=>{
                 console.log(parseJwt(token))
                 res.json({
