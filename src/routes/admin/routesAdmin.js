@@ -26,7 +26,7 @@ router.put('/updatePatient', updatePatient)
 // --------------------------- Product Tracings ----------------------
 
 router.post('/createProductTracing', createProductTracings)
-router.get('/getProductTracing', getProductTraicing)
+router.post('/getProductTracing', getProductTraicing)
 
 //-------------------------Item---------------------------------
 

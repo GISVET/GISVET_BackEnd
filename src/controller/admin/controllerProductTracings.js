@@ -39,8 +39,14 @@ const getProductTraicing = async (req, res) =>{
             ID_CLINIC_HISTORY:req.body.id_clinic_history,
             DESTINY_SERVICE:req.body.destiny_service
         },
-        orderBy:{
-            ID_ITEM: req.body.order_name
+        include:{
+            persons: true,
+            item: {
+                include:{
+                    products: true
+                }
+            },
+            clinic_histories: true
         }
     })
     if (data[0] === undefined){
@@ -52,8 +58,28 @@ const getProductTraicing = async (req, res) =>{
             message: "La trazabilidad del producto no existe"
         })
     }else{
-        res.json(data)
+        res.json(formGetProductTraicing(data))
     }    
+}
+
+function formGetProductTraicing(data){
+    let json =[]
+    for (let i = 0; i < data.length; i++) {
+        const objt ={
+            ID_PRODUCT_TC: data[i].ID_PRODUCT_TC,
+            ID_CLINIC_HISTORY: data[i].ID_CLINIC_HISTORY,
+            NAME_PATIENT: data[i].clinic_histories.NAME_PATIENT,
+            QUANTITY_USED: data[i].QUANTITY_USED,
+            UNIT_MEASUREMENT: data[i].UNIT_MEASUREMENT,
+            DESTINY_SERVICE: data[i].DESTINY_SERVICE,
+            DATE_PRODUCT_TRACING: data[i].DATE_PRODUCT_TRACING,
+            FULL_NAME_PERSON: data[i].persons.FULL_NAME,
+            DOCUMENT_PERSON: data[i].persons.DOCUMENT,
+            PRODUCT_NAME: data[i].item.products.PRODUCT_NAME
+        }
+        json[i] = objt
+    }
+    return json
 }
 
 module.exports = {
