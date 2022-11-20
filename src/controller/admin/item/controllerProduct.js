@@ -55,6 +55,7 @@ const getProduct = async (req, res) =>{
             })
         }else{
             res.json(formtGetProductJson(data))
+            // res.json(data)
         }
    } catch (error) {
         res.status(400).send({
@@ -207,31 +208,64 @@ function formtJson(data){
 
 function formtGetProductJson(data){
     const json = []
-    const aux = []
+    let count = -1
     for (let i = 0; i < data.length; i++) {
-        let obj = {
-            ID_PRODUCT: data[i].ID_PRODUCT,
-            PRODUCT_NAME: data[i].PRODUCT_NAME,
-            MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
-            TYPE_PRODUCT: data[i].TYPE_PRODUCT,
-            TOTAL_PRODUCT: countTotalProduct(data[i].item)
+        let obj
+        let present = getPresentationItems(data[i].item)
+        if(data[i].item.length > 1){
+            for (let j = 0; j < present.length; j++) {
+                count +=1
+                obj = {
+                    ID_PRODUCT: data[i].ID_PRODUCT,
+                    PRODUCT_NAME: data[i].PRODUCT_NAME,
+                    MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
+                    TYPE_PRODUCT: data[i].TYPE_PRODUCT,
+                    PRESENTATION: present[j],
+                    TOTAL_PRODUCT: countTotalProductOneMore(data[i].item, present[j])
+                }
+                json[count] = obj 
+            }
+        }else{
+            count +=1 
+            obj = {
+                ID_PRODUCT: data[i].ID_PRODUCT,
+                PRODUCT_NAME: data[i].PRODUCT_NAME,
+                MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
+                TYPE_PRODUCT: data[i].TYPE_PRODUCT,
+                PRESENTATION: data[i].item[0] === undefined ? "U": data[i].item[0].PRESENTATION,
+                TOTAL_PRODUCT: countTotalProductOne(data[i].item)
+            }
+            json[count] = obj
         }
-        aux[i] = obj
     }
-    const objt = {
-        products: aux,
-        size: data.length
-    }
-    json[0]= objt
     return json
 }
 
-function countTotalProduct(data){
+function countTotalProductOneMore(data, present){
+    let aux = 0
+    for (let i = 0; i < data.length; i++) {
+        if(data[i].PRESENTATION === present){
+            aux += data[i].QUANTITY
+        }
+    }
+    return aux
+}
+function countTotalProductOne(data){
     let aux = 0
     for (let i = 0; i < data.length; i++) {
         aux += data[i].QUANTITY
     }
     return aux
+}
+
+function getPresentationItems(data){
+    const array = []
+    for (let i = 0; i < data.length; i++) {
+        if(array.find(element => element === data[i].PRESENTATION) === undefined){
+            array[i] = data[i].PRESENTATION
+        }   
+    }
+    return array
 }
 
 
