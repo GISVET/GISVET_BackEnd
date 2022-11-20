@@ -44,7 +44,8 @@ const loginUser = async (req, res) => {
                         STATE : verify[0].STATE,
                         ID_PERSON : verify[0].ID_PERSON,
                         NAME_ROL: person.user_roles[0].roles.NAME_ROL,
-                        DEPENDECIES:[]
+                        DEPENDECIES:[],
+                        ROLES:[]
                         
                     }
                 ]
@@ -57,6 +58,14 @@ const loginUser = async (req, res) => {
                     })
                 })
                 object[0].DEPENDECIES = arrayAux
+                let arrayAuxRoles =[]
+                person.user_roles.map((rol)=>{
+                    arrayAuxRoles.push({
+                        ID_ROL:rol.roles.ID_ROL,
+                        NAME_ROL:rol.roles.NAME_ROL
+                    })
+                })
+                object[0].ROLES = arrayAuxRoles
                 console.log(object)
                 jwt.sign({object},object[0].NAME_ROL,(error,token)=>{
                     console.log(parseJwt(token))
@@ -121,7 +130,8 @@ const changeRol = async (req, res) => {
                     STATE : verify[0].STATE,
                     ID_PERSON : verify[0].ID_PERSON,
                     NAME_ROL: person.user_roles[0].roles.NAME_ROL,
-                    DEPENDECIES:[]
+                    DEPENDECIES:[],
+                    ROLES:[]
                     
                 }
             ]
@@ -133,7 +143,15 @@ const changeRol = async (req, res) => {
                     DEPENDECIE_TYPE:dependencie.dependencies.TYPE_DEPENDENCIE
                 })
             })
-            object[0].DEPENDECIES = arrayAux
+            let arrayAuxRoles =[]
+            person.user_roles.map((rol)=>{
+                arrayAuxRoles.push({
+                    ID_ROL:rol.roles.ID_ROL,
+                    NAME_ROL:rol.roles.NAME_ROL
+                })
+            })
+            object[0].ROLES = arrayAuxRoles
+            console.log(object)
             jwt.sign({object},object[0].NAME_ROL,(error,token)=>{
                 console.log(parseJwt(token))
                 res.json({
