@@ -183,7 +183,8 @@ const registerUser = async (req, res) => {
                     EMAIL: user,
                     PASSWORD_ACCOUNT: await encrypt(password),
                     STATE: "AC",
-                    ID_PERSON: req.body.id_person
+                    ID_PERSON: req.body.id_person,
+                    TEM_TOKEN:""
                 }
             })
             res.send({
