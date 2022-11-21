@@ -202,63 +202,39 @@ function formtGetProductJson(data){
     const json = []
     let count = -1
     for (let i = 0; i < data.length; i++) {
-        let obj
         let present 
         if(data[i].product_brand.length > 1){
             present = getPresentationAllItems(data[i])
             for (let k = 0; k < present.length; k++) {
-                count +=1 
-                obj = {
-                    ID_PRODUCT: data[i].ID_PRODUCT,
-                    PRODUCT_NAME: data[i].PRODUCT_NAME,
-                    MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
-                    TYPE_PRODUCT: data[i].TYPE_PRODUCT,
-                    PRESENTATION: present[k],
-                    TOTAL_PRODUCT: countItemByPresentationAll(data[i], present[k])
-                }
-                json[count] = obj
+                count +=1
+                json[count] = getObj(data[i].ID_PRODUCT, data[i].PRODUCT_NAME, data[i].MEASUREMENT_UNITS,data[i].TYPE_PRODUCT, present[k], countItemByPresentationAll(data[i], present[k]))
             }
         }else{
-            if(data[i].product_brand[0] === undefined){
+            if(data[i].product_brand[0] === undefined || data[i].product_brand[0].item[0] === undefined){
                 count +=1 
-                obj = {
-                    ID_PRODUCT: data[i].ID_PRODUCT,
-                    PRODUCT_NAME: data[i].PRODUCT_NAME,
-                    MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
-                    TYPE_PRODUCT: data[i].TYPE_PRODUCT,
-                    PRESENTATION: "U",
-                    TOTAL_PRODUCT: 0
-                }
-                json[count] = obj
-            }else if(data[i].product_brand[0].item[0] === undefined){
-                count +=1 
-                obj = {
-                    ID_PRODUCT: data[i].ID_PRODUCT,
-                    PRODUCT_NAME: data[i].PRODUCT_NAME,
-                    MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
-                    TYPE_PRODUCT: data[i].TYPE_PRODUCT,
-                    PRESENTATION: "U",
-                    TOTAL_PRODUCT: 0
-                }
-                json[count] = obj
+                json[count] = getObj(data[i].ID_PRODUCT, data[i].PRODUCT_NAME, data[i].MEASUREMENT_UNITS,data[i].TYPE_PRODUCT, "U", 0)
             }else{
                 present = getPresentationItems(data[i].product_brand[0].item)
                 for (let j = 0; j < present.length; j++) {
-                    count +=1 
-                    obj = {
-                        ID_PRODUCT: data[i].ID_PRODUCT,
-                        PRODUCT_NAME: data[i].PRODUCT_NAME,
-                        MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
-                        TYPE_PRODUCT: data[i].TYPE_PRODUCT,
-                        PRESENTATION: present[j],
-                        TOTAL_PRODUCT: countTotalProductOneMore(data[i].product_brand[0].item, present[j])
-                    }
-                    json[count] = obj
+                    count +=1
+                    json[count] = getObj(data[i].ID_PRODUCT, data[i].PRODUCT_NAME, data[i].MEASUREMENT_UNITS,data[i].TYPE_PRODUCT, present[j], countTotalProductOneMore(data[i].product_brand[0].item, present[j]))
                 }
             }
         }
     }
     return json
+}
+
+function getObj(idP, prn, men,typ,pre, total){
+    const obj = {
+        ID_PRODUCT: idP,
+        PRODUCT_NAME: prn,
+        MEASUREMENT_UNITS: men,
+        TYPE_PRODUCT: typ,
+        PRESENTATION: pre,
+        TOTAL_PRODUCT: total
+    }
+    return obj
 }
 
 function countTotalProductOneMore(data, present){
