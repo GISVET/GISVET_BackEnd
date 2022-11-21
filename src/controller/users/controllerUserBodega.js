@@ -41,6 +41,7 @@ function formtJson(data){
     const json = []
     for (let i = 0; i < data.length; i++) {
         const object = {
+            ID_ITEM: data[i].ID_ITEM,
             PRESENTATION: data[i].PRESENTATION,
             QUANTITY: data[i].QUANTITY,
             EXPIRATION_DATE: data[i].feature_products.EXPIRATION_DATE,
