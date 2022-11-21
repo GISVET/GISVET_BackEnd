@@ -10,16 +10,12 @@ const getProductBodega = async (req, res) =>{
             },
             include:{
                 item: {
-                    include:{
-                        products: true,                       
+                    include:{                      
                         feature_products: true,
-                        products:{
+                        product_brand:{
                             include:{
-                                product_brand:{
-                                    include:{
-                                        brands:true                                        
-                                    }
-                                }
+                                brands: true,
+                                products:true
                             }
                         }
                     }
@@ -32,7 +28,6 @@ const getProductBodega = async (req, res) =>{
             })
         }else{
             res.json(formtJson(data[0].item)) 
-            // res.json(data) 
         }
     } catch (error) {
         res.send({
@@ -45,25 +40,20 @@ const getProductBodega = async (req, res) =>{
 function formtJson(data){
     const json = []
     for (let i = 0; i < data.length; i++) {
-        const brands = []
-        for (let j = 0; j < data[i].products.product_brand.length; j++) {
-            brands[j] = data[i].products.product_brand[j].brands.NAME_BRAND
-        }
         const object = {
             PRESENTATION: data[i].PRESENTATION,
             QUANTITY: data[i].QUANTITY,
-            PRODUCT_NAME: data[i].products.PRODUCT_NAME,
-            MEASUREMENT_UNITS: data[i].products.MEASUREMENT_UNITS,
-            TYPE_PRODUCT: data[i].products.TYPE_PRODUCT,
             EXPIRATION_DATE: data[i].feature_products.EXPIRATION_DATE,
             QUANTITY_PER_UNIT: data[i].feature_products.QUANTITY_PER_UNIT,
             PRICE_PER_UNIT: data[i].feature_products.PRICE_PER_UNIT,
             INVIMA: data[i].feature_products.INVIMA,
-            IUP: data[i].feature_products.ID_BOX,
             MANUFACTURING_DATE: data[i].feature_products.MANUFACTURING_DATE,           
-            NAME_BRAND: brands,            
+            IUP: data[i].feature_products.IUP,
+            PRODUCT_NAME: data[i].product_brand.products.PRODUCT_NAME,
+            MEASUREMENT_UNITS: data[i].product_brand.products.MEASUREMENT_UNITS,
+            TYPE_PRODUCT: data[i].product_brand.products.TYPE_PRODUCT,
+            NAME_BRAND: data[i].product_brand.brands.NAME_BRAND,           
             DATE_EXPIRATION: calculateDate(data[i].feature_products.EXPIRATION_DATE)
-            
         }
         json[i]= object
     }
@@ -77,6 +67,7 @@ function calculateDate(date){
 
 const createItem = async (req, res) =>{
     try {
+        const nameBrand = req.body.name_brand
         
         const searchProduct = await prisma.products.findMany({
             where: {
@@ -86,7 +77,7 @@ const createItem = async (req, res) =>{
 
         const searchBrand = await prisma.brands.findUnique({
             where:{
-                ID_BRAND: req.body.id_brand
+                NAME_BRAND: nameBrand
             }
         })
 
@@ -127,13 +118,13 @@ const createItem = async (req, res) =>{
             }else if(searchBrand === null){
                 const brand = await prisma.brands.create({
                     data:{
-                        NAME_BRAND: req.body.name_brand
+                        NAME_BRAND: nameBrand
                     }
                 })
                 await prisma.product_brand.create({
                     data:{
                         ID_BRAND: brand.ID_BRAND,
-                        ID_PRODUCT: product.id_product,
+                        ID_PRODUCT: searchProduct.id_product,
                     }       
                 })
                 res.send({
@@ -143,7 +134,7 @@ const createItem = async (req, res) =>{
             
         }else{
             res.status(400).send({
-                message: "El producto registrado ya existe"
+                message: "El producto ingresado ya existe"
             }) 
         }  
         
@@ -154,7 +145,6 @@ const createItem = async (req, res) =>{
         console.log(error)
     }
 }
-
 
 
 module.exports = {
