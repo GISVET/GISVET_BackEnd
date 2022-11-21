@@ -36,10 +36,14 @@ const getProduct = async (req, res) =>{
                 PRODUCT_NAME:{
                     contains: valueName
                 },
-                ID_PRODUCT: valueId
+                ID_PRODUCT_BRAND: valueId
             },
             include:{
-                item: true
+                product_brand:{
+                    include:{
+                        item: true
+                    }
+                }
             },
             orderBy:{
                 PRODUCT_NAME: req.body.order_name
@@ -54,8 +58,8 @@ const getProduct = async (req, res) =>{
                 message: "El producto no existe"
             })
         }else{
-            res.json(formtGetProductJson(data))
-            // res.json(data)
+            // res.json(formtGetProductJson(data))
+            res.json(data)
         }
    } catch (error) {
         res.status(400).send({
@@ -209,7 +213,7 @@ function formtGetProductJson(data){
     let count = -1
     for (let i = 0; i < data.length; i++) {
         let obj
-        let present = getPresentationItems(data[i].item)
+        let present = getPresentationItems(data[i].product_brand.item)
         if(data[i].item.length > 1){
             for (let j = 0; j < present.length; j++) {
                 count +=1
