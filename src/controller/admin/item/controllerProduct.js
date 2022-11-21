@@ -68,17 +68,14 @@ const getProduct = async (req, res) =>{
 const getItemProduct =  async (req, res) =>{
     try{        
         const data = await prisma.item .findMany({
-            include:{
-                products:{
+            include:{                      
+                feature_products: true,
+                product_brand:{
                     include:{
-                        product_brand:{
-                            include:{
-                                brands: true
-                            }
-                        }
-                    }                     
-                },
-                feature_products:true,
+                        brands: true,
+                        products:true
+                    }
+                }
             }
         })    
         if (data[0] === undefined){
@@ -86,7 +83,8 @@ const getItemProduct =  async (req, res) =>{
                 message: "No se encuentra la dependencia ingresada"
             })
         }else{
-            res.json(formtJson(data)) 
+            //res.json(formtJson(data))
+            res.json(data) 
         }
     } catch (error) {
         res.send({
