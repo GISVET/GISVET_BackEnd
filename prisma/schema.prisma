@@ -45,7 +45,7 @@ model feature_products {
   PRICE_PER_UNIT     Int
   INVIMA             String    @db.VarChar(50)
   MANUFACTURING_DATE DateTime? @db.Date
-  ID_BOX             String    @db.VarChar(50)
+  IUP             String    @db.VarChar(50)
   STATE              String @db.Char(2)
   item item[]
 }
@@ -71,12 +71,12 @@ model item {
   ID_ITEM       Int    @id @default(autoincrement())
   PRESENTATION  String @db.Char(2)
   QUANTITY      Int
-  products      products?   @relation(fields: [ID_PRODUCT], references: [ID_PRODUCT])
-  ID_PRODUCT    Int
   feature_products      feature_products?   @relation(fields: [ID_FEATURE], references: [ID_FEATURE])
   ID_FEATURE    Int
   dependencies      dependencies?   @relation(fields: [ID_DEPENDENCIE], references: [ID_DEPENDENCIE])
   ID_DEPENDENCIE Int
+  product_brand      product_brand?   @relation(fields: [ID_PRODUCT_BRAND], references: [ID_PRODUCT_BRAND])
+  ID_PRODUCT_BRAND Int
   history_item history_item[]
   product_tracings product_tracings[]
 }
@@ -115,7 +115,6 @@ model products {
   PRODUCT_NAME      String @unique(map: "PR_UQ_PN") @db.VarChar(50)
   MEASUREMENT_UNITS String @db.Char(2)
   TYPE_PRODUCT      String @db.Char(2)
-  item item[]
   product_brand product_brand[]
 }
 
@@ -138,11 +137,12 @@ model user_roles {
 }
 
 model product_brand{
+  ID_PRODUCT_BRAND     Int    @id @default(autoincrement())
   brands    brands?   @relation(fields: [ID_BRAND], references: [ID_BRAND])
   ID_BRAND          Int
   products    products?   @relation(fields: [ID_PRODUCT], references: [ID_PRODUCT])
   ID_PRODUCT          Int
-  @@id([ID_BRAND, ID_PRODUCT])
+  item item[]
 }
 
 model person_dependencies {
