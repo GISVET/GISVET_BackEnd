@@ -77,6 +77,7 @@ function calculateDate(date){
 
 const createItem = async (req, res) =>{
     try {
+        const nameBrand = req.body.name_brand
         
         const searchProduct = await prisma.products.findMany({
             where: {
@@ -86,7 +87,7 @@ const createItem = async (req, res) =>{
 
         const searchBrand = await prisma.brands.findUnique({
             where:{
-                ID_BRAND: req.body.id_brand
+                NAME_BRAND: nameBrand
             }
         })
 
@@ -127,13 +128,13 @@ const createItem = async (req, res) =>{
             }else if(searchBrand === null){
                 const brand = await prisma.brands.create({
                     data:{
-                        NAME_BRAND: req.body.name_brand
+                        NAME_BRAND: nameBrand
                     }
                 })
                 await prisma.product_brand.create({
                     data:{
                         ID_BRAND: brand.ID_BRAND,
-                        ID_PRODUCT: product.id_product,
+                        ID_PRODUCT: searchProduct.id_product,
                     }       
                 })
                 res.send({
@@ -143,7 +144,7 @@ const createItem = async (req, res) =>{
             
         }else{
             res.status(400).send({
-                message: "El producto registrado ya existe"
+                message: "El producto ingresado ya existe"
             }) 
         }  
         
