@@ -129,7 +129,7 @@ const changeRol = async (req, res) => {
                     PASSWORD_ACCOUNT : verify[0].PASSWORD_ACCOUNT,
                     STATE : verify[0].STATE,
                     ID_PERSON : verify[0].ID_PERSON,
-                    NAME_ROL: person.user_roles[0].roles.NAME_ROL,
+                    NAME_ROL: rol,
                     DEPENDECIES:[],
                     ROLES:[]
                     
@@ -143,6 +143,7 @@ const changeRol = async (req, res) => {
                     DEPENDECIE_TYPE:dependencie.dependencies.TYPE_DEPENDENCIE
                 })
             })
+            object[0].DEPENDECIES = arrayAux
             let arrayAuxRoles =[]
             person.user_roles.map((rol)=>{
                 arrayAuxRoles.push({
@@ -151,6 +152,7 @@ const changeRol = async (req, res) => {
                 })
             })
             object[0].ROLES = arrayAuxRoles
+            console.log('cambio rol a ')
             console.log(object)
             jwt.sign({object},object[0].NAME_ROL,(error,token)=>{
                 console.log(parseJwt(token))
