@@ -29,15 +29,7 @@ const createProducts = async (req, res) =>{
 
 const getProduct = async (req, res) =>{
    try {
-        const valueName = typeof(req.body.value) === "string"? req.body.value: undefined
-        const valueId = typeof(req.body.value) === "number"? req.body.value: undefined
-        const data = await prisma.products .findMany({
-            where:{
-                PRODUCT_NAME:{
-                    contains: valueName
-                },
-                ID_PRODUCT_BRAND: valueId
-            },
+        const data = await prisma.products.findMany({
             include:{
                 product_brand:{
                     include:{
@@ -58,8 +50,7 @@ const getProduct = async (req, res) =>{
                 message: "El producto no existe"
             })
         }else{
-            // res.json(formtGetProductJson(data))
-            res.json(data)
+            res.json(formtGetProductJson(data))
         }
    } catch (error) {
         res.status(400).send({
@@ -87,8 +78,7 @@ const getItemProduct =  async (req, res) =>{
                 message: "No se encuentra la dependencia ingresada"
             })
         }else{
-            //res.json(formtJson(data))
-            res.json(data) 
+            res.json(formtJson(data))
         }
     } catch (error) {
         res.send({
@@ -213,31 +203,59 @@ function formtGetProductJson(data){
     let count = -1
     for (let i = 0; i < data.length; i++) {
         let obj
-        let present = getPresentationItems(data[i].product_brand.item)
-        if(data[i].item.length > 1){
-            for (let j = 0; j < present.length; j++) {
-                count +=1
+        let present 
+        if(data[i].product_brand.length > 1){
+            present = getPresentationAllItems(data[i])
+            for (let k = 0; k < present.length; k++) {
+                count +=1 
                 obj = {
                     ID_PRODUCT: data[i].ID_PRODUCT,
                     PRODUCT_NAME: data[i].PRODUCT_NAME,
                     MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
                     TYPE_PRODUCT: data[i].TYPE_PRODUCT,
-                    PRESENTATION: present[j],
-                    TOTAL_PRODUCT: countTotalProductOneMore(data[i].item, present[j])
+                    PRESENTATION: present[k],
+                    TOTAL_PRODUCT: countItemByPresentationAll(data[i], present[k])
                 }
-                json[count] = obj 
+                json[count] = obj
             }
         }else{
-            count +=1 
-            obj = {
-                ID_PRODUCT: data[i].ID_PRODUCT,
-                PRODUCT_NAME: data[i].PRODUCT_NAME,
-                MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
-                TYPE_PRODUCT: data[i].TYPE_PRODUCT,
-                PRESENTATION: data[i].item[0] === undefined ? "U": data[i].item[0].PRESENTATION,
-                TOTAL_PRODUCT: countTotalProductOne(data[i].item)
+            if(data[i].product_brand[0] === undefined){
+                count +=1 
+                obj = {
+                    ID_PRODUCT: data[i].ID_PRODUCT,
+                    PRODUCT_NAME: data[i].PRODUCT_NAME,
+                    MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
+                    TYPE_PRODUCT: data[i].TYPE_PRODUCT,
+                    PRESENTATION: "U",
+                    TOTAL_PRODUCT: 0
+                }
+                json[count] = obj
+            }else if(data[i].product_brand[0].item[0] === undefined){
+                count +=1 
+                obj = {
+                    ID_PRODUCT: data[i].ID_PRODUCT,
+                    PRODUCT_NAME: data[i].PRODUCT_NAME,
+                    MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
+                    TYPE_PRODUCT: data[i].TYPE_PRODUCT,
+                    PRESENTATION: "U",
+                    TOTAL_PRODUCT: 0
+                }
+                json[count] = obj
+            }else{
+                present = getPresentationItems(data[i].product_brand[0].item)
+                for (let j = 0; j < present.length; j++) {
+                    count +=1 
+                    obj = {
+                        ID_PRODUCT: data[i].ID_PRODUCT,
+                        PRODUCT_NAME: data[i].PRODUCT_NAME,
+                        MEASUREMENT_UNITS: data[i].MEASUREMENT_UNITS,
+                        TYPE_PRODUCT: data[i].TYPE_PRODUCT,
+                        PRESENTATION: present[j],
+                        TOTAL_PRODUCT: countTotalProductOneMore(data[i].product_brand[0].item, present[j])
+                    }
+                    json[count] = obj
+                }
             }
-            json[count] = obj
         }
     }
     return json
@@ -252,13 +270,6 @@ function countTotalProductOneMore(data, present){
     }
     return aux
 }
-function countTotalProductOne(data){
-    let aux = 0
-    for (let i = 0; i < data.length; i++) {
-        aux += data[i].QUANTITY
-    }
-    return aux
-}
 
 function getPresentationItems(data){
     const array = []
@@ -268,6 +279,36 @@ function getPresentationItems(data){
         }   
     }
     return array
+}
+
+function getPresentationAllItems(data){
+    let arreglo = []
+    let count = 0
+    for (let i = 0; i < data.product_brand.length; i++) {
+        if (data.product_brand[i].item[0] !== undefined) {
+            for (let j = 0; j < data.product_brand[i].item.length; j++) {
+                if(arreglo.find(element => element === data.product_brand[i].item[j].PRESENTATION) === undefined){
+                    arreglo[count]=data.product_brand[i].item[j].PRESENTATION
+                    count+=1
+                }
+            }
+        }
+    }
+    return arreglo
+}
+
+function countItemByPresentationAll(data, present){
+    let sumData = 0
+    for (let i = 0; i < data.product_brand.length; i++) {
+        if (data.product_brand[i].item[0] !== undefined) {
+            for (let j = 0; j < data.product_brand[i].item.length; j++) {
+                if(data.product_brand[i].item[j].PRESENTATION === present){
+                    sumData+=data.product_brand[i].item[j].QUANTITY
+                }
+            }
+        }
+    }
+    return sumData
 }
 
 
@@ -285,7 +326,6 @@ function formtJsonDependece(data){
 }
 
 function formtJsonSpecific(data){
-    console.log(data)
     const brands = []
     for (let i = 0; i <data.product_brand.length; i++) {
         brands[i] = data.product_brand[i].brands.NAME_BRAND
