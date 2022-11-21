@@ -1,12 +1,13 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const jwt = require('jsonwebtoken')
 
-const getProductFarmacia = async (req, res) =>{
+const getProductConsultorio = async (req, res) =>{
     try {
         const data = await prisma.dependencies.findMany({
             where:{
-                TYPE_DEPENDENCIE: "F",
-                DEPENDENCIE_NAME: req.body.name_farmacia 
+                TYPE_DEPENDENCIE: "C",
+                DEPENDENCIE_NAME: req.body.name_consultorio 
             },
             select:{
                 item: {
@@ -54,6 +55,33 @@ const getProductFarmacia = async (req, res) =>{
     }
 }
 
+const generateToken = async (req, res) =>{
+    try {
+        const data = await prisma.persons.findUnique({
+            where:{
+                DOCUMENT: req.body.document
+            }
+        })
+        console.log()
+        // const object = [
+        //     {
+        //         TOKEN: 
+        //     }
+        // ]
+        // jwt.sign({object},object[0].NAME_ROL,(error,token)=>{
+        //     res.json({
+        //         token: token
+        //     })
+        // })
+        res.json(data)
+    } catch (error) {
+        res.send({
+            message: "Ocurrió un error al momento de generar el token"
+        })
+        console.log(error)
+    }
+}
+
 
 function formtJson(data){
     const json = []
@@ -83,5 +111,6 @@ function formtJson(data){
 }
 
 module.exports = {
-    getProductFarmacia
+    getProductConsultorio,
+    generateToken
 }
