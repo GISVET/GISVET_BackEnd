@@ -8,43 +8,31 @@ const getProductBodega = async (req, res) =>{
                 TYPE_DEPENDENCIE: "B",
                 DEPENDENCIE_NAME: req.body.name_dependencie 
             },
-            select:{
+            include:{
                 item: {
-                    select:{
-                        PRESENTATION: true,
-                        QUANTITY: true,
-                        products:{
-                            select:{
-                                PRODUCT_NAME: true,
-                                MEASUREMENT_UNITS: true,
-                                TYPE_PRODUCT: true
-                            }
-                        },                        
+                    include:{
+                        products: true,                       
                         feature_products: true,
                         products:{
-                            select:{
+                            include:{
                                 product_brand:{
-                                    select:{
-                                        brands:{
-                                            select:{
-                                                NAME_BRAND: true
-                                            }
-                                        }
+                                    include:{
+                                        brands:true                                        
                                     }
                                 }
                             }
                         }
                     }
-                },
-
+                }
             }
-        })
+        })        
         if (data[0] === undefined){
             res.status(400).send({
                 message: "No se encuentra la dependencia ingresada"
             })
         }else{
             res.json(formtJson(data[0].item)) 
+            // res.json(data) 
         }
     } catch (error) {
         res.send({
@@ -54,15 +42,14 @@ const getProductBodega = async (req, res) =>{
     }
 }
 
-
 function formtJson(data){
     const json = []
-    const brands = []
     for (let i = 0; i < data.length; i++) {
+        const brands = []
         for (let j = 0; j < data[i].products.product_brand.length; j++) {
-            brands[j] =data[i].products.product_brand[j].brands.NAME_BRAND
+            brands[j] = data[i].products.product_brand[j].brands.NAME_BRAND
         }
-        const object= {
+        const object = {
             PRESENTATION: data[i].PRESENTATION,
             QUANTITY: data[i].QUANTITY,
             PRODUCT_NAME: data[i].products.PRODUCT_NAME,
@@ -72,6 +59,7 @@ function formtJson(data){
             QUANTITY_PER_UNIT: data[i].feature_products.QUANTITY_PER_UNIT,
             PRICE_PER_UNIT: data[i].feature_products.PRICE_PER_UNIT,
             INVIMA: data[i].feature_products.INVIMA,
+            IUP: data[i].feature_products.ID_BOX,
             MANUFACTURING_DATE: data[i].feature_products.MANUFACTURING_DATE,           
             NAME_BRAND: brands,            
             DATE_EXPIRATION: calculateDate(data[i].feature_products.EXPIRATION_DATE)
@@ -88,27 +76,78 @@ function calculateDate(date){
 }
 
 const createItem = async (req, res) =>{
-    try{
-        const item = await prisma.item.create({
-            data:{
-                PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
-                MEASUREMENT_UNITS: req.body.measurement_units,
-                TYPE_PRODUCT: req.body.type_product
+    try {
+        
+        const searchProduct = await prisma.products.findMany({
+            where: {
+                PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1)
             }
         })
-        await prisma.item.create({
-            data:{
-                PRESENTATION: req.body.presentation,
-                QUANTITY: req.body.quantity,
-                ID_PRODUCT: product.ID_PRODUCT,
-                ID_FEATURE: feature.ID_FEATURE,
-                ID_DEPENDENCIE: req.body.id_dependencie
+
+        const searchBrand = await prisma.brands.findUnique({
+            where:{
+                ID_BRAND: req.body.id_brand
             }
         })
-        res.send({
-            message: "Item creado con éxito"
-        });
-    }catch(error){
+
+        if(searchProduct == null){
+            if(searchBrand != null){
+                const product = await prisma.products.create({
+                    data:{
+                        PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
+                        MEASUREMENT_UNITS: req.body.measurement_units,
+                        TYPE_PRODUCT: req.body.type_product
+                    }
+                })
+        
+                const feature = await prisma.feature_products.create({            
+                    data:{
+                        EXPIRATION_DATE : new Date (req.body.expiration_date),
+                        QUANTITY_PER_UNIT: req.body.quantity_per_unit,
+                        PRICE_PER_UNIT: req.body.price_per_unit,
+                        INVIMA: req.body.invima,
+                        MANUFACTURING_DATE: new Date (req.body.manufacturing_date),
+                        ID_BOX: req.body.id_box,
+                        STATE: "AC"
+                    }
+                })
+        
+                await prisma.item.create({
+                    data:{
+                        PRESENTATION: req.body.presentation,
+                        QUANTITY: req.body.quantity,
+                        ID_PRODUCT: product.ID_PRODUCT,
+                        ID_FEATURE: feature.ID_FEATURE,
+                        ID_DEPENDENCIE: req.body.id_dependencie
+                    }
+                })
+                res.send({
+                    message: "Item creado con éxito"
+                });
+            }else if(searchBrand === null){
+                const brand = await prisma.brands.create({
+                    data:{
+                        NAME_BRAND: req.body.name_brand
+                    }
+                })
+                await prisma.product_brand.create({
+                    data:{
+                        ID_BRAND: brand.ID_BRAND,
+                        ID_PRODUCT: product.id_product,
+                    }       
+                })
+                res.send({
+                    message: "Item creado con éxito"
+                });
+            }        
+            
+        }else{
+            res.status(400).send({
+                message: "El producto registrado ya existe"
+            }) 
+        }  
+        
+    } catch (error) {
         res.send({
             message: "Ocurrió un error al momento de crear el item"
         });
@@ -116,6 +155,9 @@ const createItem = async (req, res) =>{
     }
 }
 
+
+
 module.exports = {
-    getProductBodega
+    getProductBodega,
+    createItem
 }

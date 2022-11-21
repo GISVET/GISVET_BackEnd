@@ -1,6 +1,7 @@
 const router = require('express').Router()
-const {getProductBodega} = require('../../controller/users/controllerUserBodega')
+const {getProductBodega, createItem} = require('../../controller/users/controllerUserBodega')
 
+router.post('/createItem',createItem)
 router.post('/getProduct',getProductBodega)
 
 module.exports = router
