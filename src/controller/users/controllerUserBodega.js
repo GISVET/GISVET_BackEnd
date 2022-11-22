@@ -147,8 +147,32 @@ const createItem = async (req, res) =>{
     }
 }
 
+const createBrand = async (req, res) =>{
+    try {
+        await prisma.brands.create({
+            data:{
+                NAME_BRAND: req.body.name_brand.charAt(0).toUpperCase() + req.body.name_brand.slice(1)
+            }
+        })
+        res.send({
+            message: "Marca creada con éxito"
+        });
+    } catch (error) {
+        if(error.code === undefined){
+            res.send({
+                message: "Ocurrió un error al momento de crear la marca"
+            });
+        }else{
+            res.send({
+                message: "Ocurrió el error "+error.code+ " al momento de crear la marca"
+            });  
+        }
+        console.log(error)
+    }
+}
 
 module.exports = {
     getProductBodega,
-    createItem
+    createItem,
+    createBrand
 }
