@@ -69,10 +69,11 @@ function calculateDate(date){
 const createItem = async (req, res) =>{
     try {
         const nameBrand = req.body.name_brand
+        const productName = req.body.product_name.charAt(0).toUpperCase() + req.body.product_name.slice(1)
         
         const searchProduct = await prisma.products.findMany({
             where: {
-                PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1)
+                PRODUCT_NAME: productName
             }
         })
 
@@ -82,52 +83,21 @@ const createItem = async (req, res) =>{
             }
         })
 
-        if(searchProduct == null){
+        if(searchProduct[0] === undefined){
             if(searchBrand != null){
-                const product = await prisma.products.create({
-                    data:{
-                        PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
-                        MEASUREMENT_UNITS: req.body.measurement_units,
-                        TYPE_PRODUCT: req.body.type_product
-                    }
-                })
-        
-                const feature = await prisma.feature_products.create({            
-                    data:{
-                        EXPIRATION_DATE : new Date (req.body.expiration_date),
-                        QUANTITY_PER_UNIT: req.body.quantity_per_unit,
-                        PRICE_PER_UNIT: req.body.price_per_unit,
-                        INVIMA: req.body.invima,
-                        MANUFACTURING_DATE: new Date (req.body.manufacturing_date),
-                        ID_BOX: req.body.id_box,
-                        STATE: "AC"
-                    }
-                })
-        
-                await prisma.item.create({
-                    data:{
-                        PRESENTATION: req.body.presentation,
-                        QUANTITY: req.body.quantity,
-                        ID_PRODUCT: product.ID_PRODUCT,
-                        ID_FEATURE: feature.ID_FEATURE,
-                        ID_DEPENDENCIE: req.body.id_dependencie
-                    }
-                })
+
+                addProduct(res, req, searchBrand)
                 res.send({
                     message: "Item creado con éxito"
-                });
-            }else if(searchBrand === null){
+                });            
+            }else{
                 const brand = await prisma.brands.create({
                     data:{
                         NAME_BRAND: nameBrand
                     }
-                })
-                await prisma.product_brand.create({
-                    data:{
-                        ID_BRAND: brand.ID_BRAND,
-                        ID_PRODUCT: searchProduct.id_product,
-                    }       
-                })
+                })           
+
+                addProduct(res, req, searchBrand)
                 res.send({
                     message: "Item creado con éxito"
                 });
@@ -237,6 +207,44 @@ const assingItem = async (req, res) =>{
     }
 }
 
+const addProduct = async (res, req, brand) =>{
+    const product = await prisma.products.create({
+        data:{
+            PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
+            MEASUREMENT_UNITS: req.body.measurement_units,
+            TYPE_PRODUCT: req.body.type_product
+        }
+    })
+
+    const feature = await prisma.feature_products.create({            
+        data:{
+            EXPIRATION_DATE : new Date (req.body.expiration_date),
+            QUANTITY_PER_UNIT: req.body.quantity_per_unit,
+            PRICE_PER_UNIT: req.body.price_per_unit,
+            INVIMA: req.body.invima,
+            MANUFACTURING_DATE: new Date (req.body.manufacturing_date),
+            IUP: req.body.iup,
+            STATE: "AC"
+        }
+    })
+
+    const productBrand = await prisma.product_brand.create({
+        data:{
+            ID_BRAND: brand.ID_BRAND,
+            ID_PRODUCT: product.ID_PRODUCT,
+        }       
+    })
+
+    await prisma.item.create({
+        data:{
+            PRESENTATION: req.body.presentation,
+            QUANTITY: req.body.quantity,                        
+            ID_PRODUCT_BRAND: productBrand.ID_PRODUCT_BRAND,
+            ID_FEATURE: feature.ID_FEATURE,
+            ID_DEPENDENCIE: req.body.id_dependencie
+        }
+    })
+}
 
 module.exports = {
     getProductBodega,
