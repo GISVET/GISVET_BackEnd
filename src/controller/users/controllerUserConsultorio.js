@@ -1,6 +1,7 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
 
 const getProductConsultorio = async (req, res) =>{
     try {
@@ -60,20 +61,17 @@ const generateToken = async (req, res) =>{
         const data = await prisma.persons.findUnique({
             where:{
                 DOCUMENT: req.body.document
+            }, 
+            include:{
+                accounts: true
             }
         })
-        console.log()
-        // const object = [
-        //     {
-        //         TOKEN: 
-        //     }
-        // ]
-        // jwt.sign({object},object[0].NAME_ROL,(error,token)=>{
-        //     res.json({
-        //         token: token
-        //     })
-        // })
-        res.json(data)
+        const object = [getToken(data)]
+        jwt.sign({object},"tokenTem",{expiresIn: '72000s'},(error,token)=>{
+            enviarMail(data.accounts[0].EMAIL, token).then((data)=>{
+                res.json(data)
+            })
+        })
     } catch (error) {
         res.send({
             message: "Ocurrió un error al momento de generar el token"
@@ -82,6 +80,48 @@ const generateToken = async (req, res) =>{
     }
 }
 
+function parseJwt (token) {
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+}
+
+async function enviarMail (email, token) {
+    const config = {
+        host : 'smtp.gmail.com',
+        port : 587,
+        auth : {
+            user : "raulvalencia932@gmail.com",
+            pass: "gwchqpdocynnujzu"
+        }
+    }
+
+    const mensaje = {
+        from : "raulvalencia932@gmail.com",
+        to: email, 
+        subject: "Token GISVET",
+        text: "Este código temporal tiene una validez de 20 horas: "+parseJwt(token).object[0].token
+    }
+
+    await prisma.accounts.update({
+        where:{
+            EMAIL: email
+        },
+        data: {
+            TEM_TOKEN :token
+        }
+    })
+    const transport = nodemailer.createTransport(config);
+    const info = await transport.sendMail(mensaje )
+    return info
+}
+
+function getToken(data){
+    const code = data.DOCUMENT
+    const type_document = data.DOCUMENT_TYPE
+    const time = new Date().getTime().toString()
+    let ran1= Math.trunc(Math.random()*10) 
+    let ran2= Math.trunc(Math.random()*10)
+    return { token: ran1+code.substring(code.length -2)+type_document+time.substring(time.length -2)+ ran2}
+}
 
 function formtJson(data){
     const json = []
