@@ -43,7 +43,11 @@ const getProductTraicing = async (req, res) =>{
             persons: true,
             item: {
                 include:{
-                    products: true
+                    product_brand:{
+                        include:{
+                            products:true
+                        }
+                    }
                 }
             },
             clinic_histories: true
@@ -59,6 +63,7 @@ const getProductTraicing = async (req, res) =>{
         })
     }else{
         res.json(formGetProductTraicing(data))
+        // res.json(data)
     }    
 }
 
@@ -75,7 +80,7 @@ function formGetProductTraicing(data){
             DATE_PRODUCT_TRACING: data[i].DATE_PRODUCT_TRACING,
             FULL_NAME_PERSON: data[i].persons.FULL_NAME,
             DOCUMENT_PERSON: data[i].persons.DOCUMENT,
-            PRODUCT_NAME: data[i].item.products.PRODUCT_NAME
+            PRODUCT_NAME: data[i].item.product_brand.products.PRODUCT_NAME
         }
         json[i] = objt
     }
