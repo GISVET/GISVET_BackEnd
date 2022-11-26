@@ -158,7 +158,5 @@ const addProduct = async (res, req, brand) =>{
 
 module.exports = {
     getProductBodega,
-    createItem,
-    createBrand,
-    assingItem
+    createItem
 }
