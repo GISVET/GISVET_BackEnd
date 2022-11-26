@@ -1,12 +1,14 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
 
-const getProductFarmacia = async (req, res) =>{
+const getProductConsultorio = async (req, res) =>{
     try {
         const data = await prisma.dependencies.findMany({
             where:{
-                TYPE_DEPENDENCIE: "F",
-                DEPENDENCIE_NAME: req.body.name_farmacia 
+                TYPE_DEPENDENCIE: "C",
+                DEPENDENCIE_NAME: req.body.name_consultorio 
             },
             select:{
                 item: {
@@ -54,32 +56,72 @@ const getProductFarmacia = async (req, res) =>{
     }
 }
 
-const sendProducts = async (req, res) =>{
+const generateToken = async (req, res) =>{
     try {
         const data = await prisma.persons.findUnique({
             where:{
-                DOCUMENT: req.body.document
+                ID_PERSON: req.body.id_person
+            }, 
+            include:{
+                accounts: true
             }
         })
-        if(data !== null){
-            res.send({
-                message: "Se verifico el pedido"
+        const object = [getToken(data)]
+        jwt.sign({object},data.DOCUMENT,{expiresIn: '72000s'},(error,token)=>{
+            enviarMail(data.accounts[0].EMAIL, token).then((data)=>{
+                res.json(data)
             })
-        }else{
-            res.status(400).send({
-                message: "El usuario no se encuentra registrado"
-            })
-        }
-        console.log(data)
-        
-    } catch(error) {
+        })
+    } catch (error) {
         res.send({
-            message: "Ocurrió un error al momento de realizar el pedido"
+            message: "Ocurrió un error al momento de generar el token"
         })
         console.log(error)
     }
 }
 
+function parseJwt (token) {
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+}
+
+async function enviarMail (email, token) {
+    const config = {
+        host : 'smtp.gmail.com',
+        port : 587,
+        auth : {
+            user : "raulvalencia932@gmail.com",
+            pass: "gwchqpdocynnujzu"
+        }
+    }
+
+    const mensaje = {
+        from : "raulvalencia932@gmail.com",
+        to: email, 
+        subject: "Token GISVET",
+        text: "Este código temporal tiene una validez de 20 horas: "+parseJwt(token).object[0].token
+    }
+
+    await prisma.accounts.update({
+        where:{
+            EMAIL: email
+        },
+        data: {
+            TEM_TOKEN :token
+        }
+    })
+    const transport = nodemailer.createTransport(config);
+    const info = await transport.sendMail(mensaje )
+    return info
+}
+
+function getToken(data){
+    const code = data.DOCUMENT
+    const type_document = data.DOCUMENT_TYPE
+    const time = new Date().getTime().toString()
+    let ran1= Math.trunc(Math.random()*10) 
+    let ran2= Math.trunc(Math.random()*10)
+    return { token: ran1+code.substring(code.length -2)+type_document+time.substring(time.length -2)+ ran2}
+}
 
 function formtJson(data){
     const json = []
@@ -108,9 +150,7 @@ function formtJson(data){
     return json
 }
 
-
-
 module.exports = {
-    getProductFarmacia,
-    sendProducts
+    getProductConsultorio,
+    generateToken
 }
