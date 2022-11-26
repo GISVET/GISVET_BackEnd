@@ -60,14 +60,14 @@ const generateToken = async (req, res) =>{
     try {
         const data = await prisma.persons.findUnique({
             where:{
-                DOCUMENT: req.body.document
+                ID_PERSON: req.body.id_person
             }, 
             include:{
                 accounts: true
             }
         })
         const object = [getToken(data)]
-        jwt.sign({object},"tokenTem",{expiresIn: '72000s'},(error,token)=>{
+        jwt.sign({object},data.DOCUMENT,{expiresIn: '72000s'},(error,token)=>{
             enviarMail(data.accounts[0].EMAIL, token).then((data)=>{
                 res.json(data)
             })
