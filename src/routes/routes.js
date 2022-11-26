@@ -15,8 +15,8 @@ router.put('/updateUser', updateUser)
 
 //-------------------Rutas-----------------------
 
-router.use('/Admin',require('./admin/routesAdmin'))
-router.use('/Users', require('./users/routesUsers'))
+router.use('/Admin',verificationAdmin,require('./admin/routesAdmin'))
+router.use('/Users',verificationUser,require('./users/routesUsers'))
 
 //-------------------Verificar token --------------------
 
