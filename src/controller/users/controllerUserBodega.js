@@ -1,70 +1,6 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
-
-const getProductBodega = async (req, res) =>{
-    try {
-        const data = await prisma.dependencies.findMany({
-            where:{
-                TYPE_DEPENDENCIE: "B",
-                DEPENDENCIE_NAME: req.body.name_dependencie 
-            },
-            include:{
-                item: {
-                    include:{                      
-                        feature_products: true,
-                        product_brand:{
-                            include:{
-                                brands: true,
-                                products:true
-                            }
-                        }
-                    }
-                }
-            }
-        })        
-        if (data[0] === undefined){
-            res.status(400).send({
-                message: "No se encuentra la dependencia ingresada"
-            })
-        }else{
-            res.json(formtJson(data[0].item)) 
-        }
-    } catch (error) {
-        res.send({
-            message: "Ocurrió un error al momento obtener los productos"
-        })
-        console.log(error)
-    }
-}
-
-function formtJson(data){
-    const json = []
-    for (let i = 0; i < data.length; i++) {
-        const object = {
-            ID_ITEM: data[i].ID_ITEM,
-            PRESENTATION: data[i].PRESENTATION,
-            QUANTITY: data[i].QUANTITY,
-            EXPIRATION_DATE: data[i].feature_products.EXPIRATION_DATE,
-            QUANTITY_PER_UNIT: data[i].feature_products.QUANTITY_PER_UNIT,
-            PRICE_PER_UNIT: data[i].feature_products.PRICE_PER_UNIT,
-            INVIMA: data[i].feature_products.INVIMA,
-            MANUFACTURING_DATE: data[i].feature_products.MANUFACTURING_DATE,           
-            IUP: data[i].feature_products.IUP,
-            PRODUCT_NAME: data[i].product_brand.products.PRODUCT_NAME,
-            MEASUREMENT_UNITS: data[i].product_brand.products.MEASUREMENT_UNITS,
-            TYPE_PRODUCT: data[i].product_brand.products.TYPE_PRODUCT,
-            NAME_BRAND: data[i].product_brand.brands.NAME_BRAND,           
-            DATE_EXPIRATION: calculateDate(data[i].feature_products.EXPIRATION_DATE)
-        }
-        json[i]= object
-    }
-    return json
-}
-
-function calculateDate(date){
-    const diff = Math.trunc((new Date(date).getTime() - (new Date(new Date()-3600*1000*5).getTime()))/(1000*60*60*24))
-    return diff > 0 ? diff + " días" :"Producto vencido"
-}
+const jwt = require('jsonwebtoken')
 
 const createItem = async (req, res) =>{
     try {
@@ -117,6 +53,148 @@ const createItem = async (req, res) =>{
     }
 }
 
+const sendProducts = async (req, res) =>{
+    try {
+        const dependencia = req.body.name_dependecie
+        const tokenTem = req.body.token_tem
+        const data = await prisma.persons.findUnique({
+            where:{
+                DOCUMENT: req.body.document
+            },
+            include:{
+                accounts: true
+            }
+        })
+        if(data !== null){
+            if(data.accounts[0].TEM_TOKEN !== ""){
+                jwt.verify(data.accounts[0].TEM_TOKEN , data.DOCUMENT, (error, token) => {
+                    if(error){
+                        res.status(400).send({
+                            message: "El token ya expiro"
+                        })
+                    }else{
+                        if(parseJwt(data.accounts[0].TEM_TOKEN).object[0].token === tokenTem){
+                            veifyDependencie(dependencia).then(
+                                veri =>{
+                                    if(veri){
+                                        sendProductsBodega(req, res)
+                                    }else{
+                                        res.status(400).send({
+                                            message: "El nombre de la dependecia no es valido"
+                                        })
+                                    }
+                                }
+                            )
+                        }else{
+                            res.status(400).send({
+                                message: "El token no es valido"
+                            })
+                        } 
+                    }
+                })
+            }else{
+                res.status(400).send({
+                    message: "El usuario no tienen token"
+                })
+            }
+        }else{
+            res.status(400).send({
+                message: "El usuario no se encuentra registrado"
+            })
+        }
+    } catch(error) {
+        res.status(400).send({
+            message: "Ocurrió un error al momento de realizar la validación del token"
+        })
+        console.log(error)
+    }
+}
+
+async function veifyDependencie(name){
+    const dependencie = await prisma.dependencies.findMany({
+        where:{
+            TYPE_DEPENDENCIE: "F",
+            DEPENDENCIE_NAME: name
+        }
+    })
+    if(dependencie[0] === undefined){
+        return false
+    }
+    return true
+}
+
+function parseJwt (token) {
+    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+}
+
+const sendProductsBodega = async (req, res) =>{
+    try {   
+        const products = req.body.products
+        for (let i = 0; i < products.length; i++) {
+            const item = await prisma.item.findUnique({
+                where:{
+                    ID_ITEM: products[i].id_item
+                },
+                include:{
+                    feature_products: true 
+                }
+            })
+            const dependencie = await prisma.dependencies.findMany({
+                where:{
+                    TYPE_DEPENDENCIE: "F",
+                    DEPENDENCIE_NAME: req.body.name_dependecie
+                }
+            })
+            const item_new = await prisma.item.findMany({
+                where:{
+                    PRESENTATION: "U",
+                    ID_DEPENDENCIE: dependencie[0].ID_DEPENDENCIE,
+                    ID_FEATURE: item.ID_FEATURE,
+                    ID_PRODUCT_BRAND: item.ID_PRODUCT_BRAND
+                }
+            })
+            await prisma.item.update({
+                where:{
+                    ID_ITEM: products[i].id_item
+                },
+                data:{
+                    QUANTITY: (item.QUANTITY - products[i].quantity)
+                }
+            })
+            if(item_new[0] === undefined){
+                await prisma.item.create({
+                    data:{
+                        PRESENTATION: "U",
+                        QUANTITY: products[i].quantity* item.feature_products.QUANTITY_PER_UNIT,
+                        ID_DEPENDENCIE: dependencie[0].ID_DEPENDENCIE,
+                        ID_FEATURE: item.ID_FEATURE,
+                        ID_PRODUCT_BRAND: item.ID_PRODUCT_BRAND
+                    }
+                })
+            }else{
+                await prisma.item.update({
+                    where:{
+                        ID_ITEM: item_new[0].ID_ITEM
+                    },
+                    data:{
+                        QUANTITY: item_new[0].QUANTITY + (products[i].quantity* item.feature_products.QUANTITY_PER_UNIT)
+                    }
+                })
+            }
+        }
+        res.send({
+            message: "Esta todo bien"
+        })
+    } catch (error) {
+        res.status(400).send({
+            message: "Ocurrió un error al momento de realizar el pedido"
+        })
+        console.log(error)
+    }
+}
+
+
+
 const addProduct = async (res, req, brand) =>{
     const product = await prisma.products.create({
         data:{
@@ -157,6 +235,6 @@ const addProduct = async (res, req, brand) =>{
 }
 
 module.exports = {
-    getProductBodega,
-    createItem
+    createItem,
+    sendProducts
 }

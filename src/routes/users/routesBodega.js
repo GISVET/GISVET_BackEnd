@@ -1,8 +1,10 @@
 const router = require('express').Router()
-const {getProductBodega, createItem} = require('../../controller/users/controllerUserBodega')
+const {createItem, sendProducts} = require('../../controller/users/controllerUserBodega')
+const {getProducts} = require('../../controller/users/general') 
 
 router.put('/createItem',createItem)
-router.post('/getProduct',getProductBodega)
+router.post('/getProduct',getProducts)
+router.post('/sendProducts',sendProducts)
 
 router.use('/Item', require('../admin/routesAdminItem'))
 

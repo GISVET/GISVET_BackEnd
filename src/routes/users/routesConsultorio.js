@@ -1,7 +1,7 @@
 const router = require('express').Router()
-const {getProductConsultorio, generateToken} = require('../../controller/users/controllerUserConsultorio')
+const {generateToken, getProducts} = require('../../controller/users/general')
 
-router.post('/getProduct',getProductConsultorio)
-router.post('/generateToken',generateToken)
+router.post('/getProducts',getProducts)
+router.post('/generateToken', generateToken)
 
 module.exports = router
