@@ -1,7 +1,9 @@
 const router = require('express').Router()
-const {getProductFarmacia, sendProducts} = require('../../controller/users/controllerUserFarmacia')
+const {sendProducts} = require('../../controller/users/controllerUserFarmacia')
+const {generateToken, getProducts} = require('../../controller/users/general')
 
-router.post('/getProductFarmacia',getProductFarmacia)
+router.post('/getProducts',getProducts)
 router.post('/sendProducts',sendProducts)
+router.post('/generateToken', generateToken)
 
 module.exports = router
