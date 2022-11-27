@@ -120,36 +120,30 @@ const getSpecificProduct = async (req, res) =>{
             where: {
                 ID_PRODUCT: req.body.id_product
             },
-            select:{
-                PRODUCT_NAME: true,
-                MEASUREMENT_UNITS: true,
-                TYPE_PRODUCT: true,
+            include:{
                 product_brand:{
-                    select:{
-                        brands:{
-                            select:{
-                                NAME_BRAND: true
+                    include:{
+                        brands: true,
+                        item: {
+                            include:{
+                                feature_products: true, 
+                                dependencies: true
                             }
                         }
                     }
-                },
-                item:{
-                    select:{
-                        PRESENTATION: true,
-                        QUANTITY: true,
-                        feature_products:true
-                    }
                 }
             }
-        })      
+        })
         if(data === null){
             res.status(400).send({
                 message: "El producto no existe"
             })
         }else {            
             res.json(formtJsonSpecific(data))
+            // res.json(data)
         }
     }catch(error){
+        console.log(error)  
         res.status(400).send({
             message: "Ocurrió el error "+ error.code+ " al momento de registrar el producto"
         })
@@ -302,18 +296,35 @@ function formtJsonDependece(data){
 }
 
 function formtJsonSpecific(data){
-    const brands = []
-    for (let i = 0; i <data.product_brand.length; i++) {
-        brands[i] = data.product_brand[i].brands.NAME_BRAND
-    }
-    const object= {
-        PRODUCT_NAME: data.PRODUCT_NAME,
-        MEASUREMENT_UNITS: data.MEASUREMENT_UNITS,
-        TYPE_PRODUCT: data.TYPE_PRODUCT,   
-        BRANS: brands, 
-        LOTES: data.item
-    }
-    return object
+    const json = []
+    for (let i = 0; i <data.product_brand.length; i++) {        
+        for (let j = 0; j < data.product_brand[i].item.length; j++) {
+            const products = { 
+                PRODUCT_NAME: data.PRODUCT_NAME,
+                MEASUREMENT_UNITS: data.MEASUREMENT_UNITS,
+                TYPE_PRODUCT: data.TYPE_PRODUCT,                
+
+                NAME_BRAND : data.product_brand[i].brands.NAME_BRAND,
+
+                ID_ITEM : data.product_brand[i].item[j].ID_ITEM,
+                PRESENTATION : data.product_brand[i].item[j].PRESENTATION,
+                QUANTITY: data.product_brand[i].item[j].QUANTITY,
+                ID_DEPENDENCIE : data.product_brand[i].item[j].ID_DEPENDENCIE,
+
+                EXPIRATION_DATE : data.product_brand[i].item[j].feature_products.EXPIRATION_DATE,
+                QUANTITY_PER_UNIT : data.product_brand[i].item[j].feature_products.QUANTITY_PER_UNIT,
+                INVIMA : data.product_brand[i].item[j].feature_products.INVIMA,
+                IUP : data.product_brand[i].item[j].feature_products.IUP,
+                MANUFACTURING_DATE : data.product_brand[i].item[j].feature_products.MANUFACTURING_DATE,
+                PRICE_PER_UNIT : data.product_brand[i].item[j].feature_products.PRICE_PER_UNIT,
+
+                DEPENDENCIE_NAME : data.product_brand[i].item[j].feature_products.DEPENDENCIE_NAME,
+                TYPE_DEPENDENCIE : data.product_brand[i].item[j].feature_products.TYPE_DEPENDENCIE
+            }
+            json[i] = products
+        }
+    } 
+    return json
 }
 
 module.exports = {
