@@ -118,13 +118,16 @@ const getSpecificProduct = async (req, res) =>{
     try{
         const data = await prisma.products.findUnique({
             where: {
-                ID_PRODUCT: req.body.id_product
+                ID_PRODUCT: req.body.id_product, 
             },
             include:{
                 product_brand:{
                     include:{
                         brands: true,
                         item: {
+                            where:{
+                                PRESENTATION: req.body.presentation
+                            },
                             include:{
                                 feature_products: true, 
                                 dependencies: true
@@ -297,6 +300,7 @@ function formtJsonDependece(data){
 
 function formtJsonSpecific(data){
     const json = []
+    let count = 0
     for (let i = 0; i <data.product_brand.length; i++) {        
         for (let j = 0; j < data.product_brand[i].item.length; j++) {
             const products = { 
@@ -321,7 +325,8 @@ function formtJsonSpecific(data){
                 DEPENDENCIE_NAME : data.product_brand[i].item[j].feature_products.DEPENDENCIE_NAME,
                 TYPE_DEPENDENCIE : data.product_brand[i].item[j].feature_products.TYPE_DEPENDENCIE
             }
-            json[i] = products
+            json[count] = products
+            count +=1
         }
     } 
     return json
