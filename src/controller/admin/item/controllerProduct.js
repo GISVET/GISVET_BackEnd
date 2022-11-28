@@ -322,8 +322,8 @@ function formtJsonSpecific(data){
                 MANUFACTURING_DATE : data.product_brand[i].item[j].feature_products.MANUFACTURING_DATE,
                 PRICE_PER_UNIT : data.product_brand[i].item[j].feature_products.PRICE_PER_UNIT,
 
-                DEPENDENCIE_NAME : data.product_brand[i].item[j].feature_products.DEPENDENCIE_NAME,
-                TYPE_DEPENDENCIE : data.product_brand[i].item[j].feature_products.TYPE_DEPENDENCIE
+                DEPENDENCIE_NAME : data.product_brand[i].item[j].dependencies.DEPENDENCIE_NAME,
+                TYPE_DEPENDENCIE : data.product_brand[i].item[j].dependencies.TYPE_DEPENDENCIE
             }
             json[count] = products
             count +=1
