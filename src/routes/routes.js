@@ -16,6 +16,7 @@ router.put('/updateUser', updateUser)
 //-------------------Rutas-----------------------
 
 router.use('/Admin',verificationAdmin,require('./admin/routesAdmin'))
+router.use('/Auditor',verificationAudi,require('./admin/routesAdmin'))
 router.use('/Users',verificationUser,require('./users/routesUsers'))
 
 //-------------------Verificar token --------------------
@@ -46,6 +47,7 @@ verificationAdmin.use((req, res, next) => {
         })
     }
 })
+
 
 verificationUser.use((req, res, next) => {
     let token = req.headers['x-access-token'] || req.headers['authorization']
