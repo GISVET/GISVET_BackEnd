@@ -1,10 +1,11 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
 const { encrypt, compare } = require('../../../helpers/handleBcrypt')
+const {createAudit} = require("../../auditor")
 
 const createPersons = async (req, res) =>{
     try {
-        await prisma.persons.create({
+        const person = await prisma.persons.create({
             data:{
                 FULL_NAME: req.body.full_name.charAt(0).toUpperCase() + req.body.full_name.slice(1),
                 DOCUMENT_TYPE: req.body.document_type,
@@ -14,6 +15,7 @@ const createPersons = async (req, res) =>{
                 PROFESSIONAL_ID: req.body.professional_id             
             }
         })
+        createAudit(req, res, "Creó el usuario con el id "+person.ID_PERSON)
         res.send({
             message: "Persona creada con éxito"
         });
@@ -78,6 +80,7 @@ const createPersonAll = async (req, res) =>{
             res.send({
                 message: "Usuario registrado con éxito."
             })
+            createAudit(req, res, "Creó un usuario con cuenta y rol, con el id "+data.ID_PERSON)
         } 
     } catch (error) {
         if(error.code === undefined){
@@ -176,7 +179,7 @@ const getIdPersons = async (req, res) =>{
 
 const updatePersons = async (req, res) =>{
     try{
-        await prisma.persons.update({
+        const person = await prisma.persons.update({
             where: {
                 ID_PERSON: req.body.id_person
             },
@@ -188,6 +191,7 @@ const updatePersons = async (req, res) =>{
                 PROFESSIONAL_ID: req.body.professional_id
             }
         })
+        createAudit(req, res, "Se actualizo la persona con el id "+person.ID_PERSON)
         res.send({
             message: "Persona actualizada con éxito."
         });
@@ -207,7 +211,18 @@ const updatePersons = async (req, res) =>{
 
 const deletePersons = async (req, res) =>{
     try{
-
+        const person = await prisma.persons.update({
+            where: {
+                ID_PERSON: req.body.id_person
+            },
+            data:{
+                STATE: "DC",
+            }
+        })
+        createAudit(req, res, "Se elimino la persona con el id "+person.ID_PERSON)
+        res.send({
+            message: "Persona borrada con éxito."
+        });
     }catch (error) {
         if(error.code === undefined){
             res.status(400).send({
@@ -220,17 +235,6 @@ const deletePersons = async (req, res) =>{
         }
         console.log(error)
     }
-    await prisma.persons.update({
-        where: {
-            ID_PERSON: req.body.id_person
-        },
-        data:{
-            STATE: "DC",
-        }
-    })
-    res.send({
-        message: "Persona borrada con éxito."
-    });
 }
 
 module.exports = {

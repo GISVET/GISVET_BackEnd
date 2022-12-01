@@ -1,6 +1,7 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
 const jwt = require('jsonwebtoken')
+const {createAudit} = require('../auditor')
 
 const createItem = async (req, res) =>{
     try {
@@ -182,8 +183,9 @@ const sendProductsBodega = async (req, res) =>{
                 })
             }
         }
+        createAudit(req, res, "Se enviaron productos de bodega a farmcia")
         res.send({
-            message: "Esta todo bien"
+            message: "Se registraron los productos en en farmacia con exito"
         })
     } catch (error) {
         res.status(400).send({
@@ -223,7 +225,7 @@ const addProduct = async (res, req, brand) =>{
         }       
     })
 
-    await prisma.item.create({
+    const item = await prisma.item.create({
         data:{
             PRESENTATION: req.body.presentation,
             QUANTITY: req.body.quantity,                        
@@ -232,6 +234,7 @@ const addProduct = async (res, req, brand) =>{
             ID_DEPENDENCIE: req.body.id_dependencie
         }
     })
+    createAudit(req, res, "Se creo el item con el id "+item.ID_ITEM)
 }
 
 module.exports = {
