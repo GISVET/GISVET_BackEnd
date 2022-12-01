@@ -5,6 +5,7 @@ const verificationUser = Router()
 const verificationAudi = Router()
 const jwt = require('jsonwebtoken')
 const {loginUser, registerUser, changeRol, updateUser} = require("../controller/controllerAuthentication")
+const {getAudit} = require("../controller/auditor")
 
 //------------------ Cuentas-----------------------
 
@@ -12,6 +13,7 @@ router.post('/login', loginUser)
 router.post('/register', registerUser)
 router.post('/changeRol', changeRol)
 router.put('/updateUser', updateUser)
+router.get('/getAudit', getAudit)
 
 //-------------------Rutas-----------------------
 

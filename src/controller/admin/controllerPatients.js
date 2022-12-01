@@ -1,5 +1,6 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const {createAudit} = require("../auditor")
 
 const createPatient = async (req, res) =>{    
     try{
