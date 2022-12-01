@@ -1,9 +1,10 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const {createAudit} = require("../auditor")
 
 const createProductTracings = async (req, res) =>{     
     try{
-        await prisma.product_tracings .create({
+        const pt = await prisma.product_tracings .create({
             data:{
                 ID_PERSON : req.body.id_person,
                 ID_ITEM : req.body.id_item,
@@ -14,6 +15,7 @@ const createProductTracings = async (req, res) =>{
                 DATE_PRODUCT_TRACING :  new Date(new Date()-3600*1000*5).toISOString()
             }
         })
+        createAudit(req, res, "Creó la trazabilidada con el id "+pt.ID_PRODUCT_TC)
         res.send({
             message: "Trazabilidad registrada del producto registrada con éxito"
         });

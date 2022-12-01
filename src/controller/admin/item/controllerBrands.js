@@ -1,14 +1,16 @@
 const {PrismaClient} = require("@prisma/client");
 const { json } = require("body-parser");
 const prisma = new PrismaClient()
+const {createAudit} = require("../../auditor")
 
 const createBrand = async (req, res) =>{
     try {
-        await prisma.brands.create({
+        const brand = await prisma.brands.create({
             data:{
                 NAME_BRAND: req.body.name_brand.charAt(0).toUpperCase() + req.body.name_brand.slice(1)
             }
         })
+        createAudit(req, res, "Creó la marca con el id "+brand.ID_BRAND)
         res.send({
             message: "Marca creada con éxito"
         });
@@ -28,7 +30,7 @@ const createBrand = async (req, res) =>{
 
 const updateBrand = async (req, res)=>{
     try {
-        await prisma.brands.update({
+        const brand = await prisma.brands.update({
             where:{
                 ID_BRAND: req.body.id_brand
             },
@@ -37,6 +39,7 @@ const updateBrand = async (req, res)=>{
                 NAME_BRAND: req.body.name_brand.charAt(0).toUpperCase() + req.body.name_brand.slice(1)
             }
         })
+        createAudit(req, res, "Se actualizo la marca con el id "+brand.ID_BRAND)
         res.send({
             message: "La marca se actualizó de manera exitosa"
         })
