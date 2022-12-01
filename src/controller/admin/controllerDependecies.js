@@ -1,18 +1,23 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const {createAudit} = require("../auditor")
 
 const createDependencie = async (req, res) =>{
     try {
-        await prisma.dependencies.create({
+        const depe = await prisma.dependencies.create({
             data:{
                 DEPENDENCIE_NAME: req.body.dependencie_name,
                 TYPE_DEPENDENCIE: req.body.type_dependencie
             }
         })
+        createAudit(req, res, "Creó la dependecia con el id "+depe.ID_DEPENDENCIE)
         res.send({
             message: "Dependencia creada con exito"
         });
     } catch (error) {
+        res.status(400).send({
+            message: "Ocurrio un error al momento de crear una dependecia"
+        })
         console.log(error)
     }
 }
@@ -46,7 +51,7 @@ const getDependencies = async (req, res) =>{
 
 const createDependencieUser = async (req, res) =>{
     try {
-        await prisma.person_dependencies.create({
+        const depe = await prisma.person_dependencies.create({
             data:{
                 ID_PERSON : req.body.id_person,
                 ID_DEPENDENCIE : req.body.id_dependencie,
@@ -54,11 +59,12 @@ const createDependencieUser = async (req, res) =>{
                 DATE_PERSON_DEPENDENCIES: new Date(new Date()-3600*1000*5).toISOString()
             }
         })
+        createAudit(req, res, "Se asigno la dependecia "+depe.ID_DEPENDENCIE+" al usuario " + depe.ID_PERSON)
         res.send({
             message: "Dependiencia asignada correctamente"
         });
     } catch (error) {
-        res.send({
+        res.status(400).send({
             message: "Ocurrio un error al momento de asignar una dependecia"
         });
         console.log(error)
@@ -90,7 +96,7 @@ const getIdDependencies = async (req, res) =>{
 
 const updateDependecie = async (req, res) =>{
     try {
-        await prisma.dependencies.update({
+        const depe = await prisma.dependencies.update({
             where: {
                 ID_DEPENDENCIE: req.body.id_dependencie
             },
@@ -99,6 +105,7 @@ const updateDependecie = async (req, res) =>{
                 TYPE_DEPENDENCIE: req.body.type_dependencie
             }
         })
+        createAudit(req, res, "Se actualizó la dependecia con el id "+depe.ID_DEPENDENCIE)
         res.send({
             message: "Dependencia actualizada con exito."
         });
