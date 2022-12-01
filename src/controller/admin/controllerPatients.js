@@ -4,12 +4,13 @@ const {createAudit} = require("../auditor")
 
 const createPatient = async (req, res) =>{    
     try{
-        await prisma.clinic_histories .create({
+        const patient = await prisma.clinic_histories .create({
             data:{
                 ID_CLINIC_HISTORY: req.body.id_clinic_history,
                 NAME_PATIENT: req.body.name_patient.charAt(0).toUpperCase() + req.body.name_patient.slice(1)
             }
         })
+        createAudit(req, res, "Creó el paciente con el id "+ patient.ID_CLINIC_HISTORY)
         res.send({
             message: "El paciente se ha registrado con éxito"
         });
@@ -137,13 +138,15 @@ const updatePatient = async (req, res) =>{
                 NAME_PATIENT: req.body.name_patient
             }
         })
+
+        createAudit(req, res, "Se actualizó la información del paciente con id"+ info.ID_CLINIC_HISTORY)
         res.send({
             message: "El paciente ha sido actualizado con éxito."
         })
     }catch (error) {
         console.log(error)
         res.status(400).send({
-            message: "Ocurrio un error al actualizar la información del paciente"
+            message: "Ocurrió un error al actualizar la información del paciente"
         })
     }       
 }

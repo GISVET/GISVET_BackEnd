@@ -1,15 +1,17 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const {createAudit} = require("../../auditor")
 
 const createUserRoles = async (req, res) =>{
     try {
-        await prisma.user_roles.create({
+        const usrol = await prisma.user_roles.create({
             data:{
                 ID_ROL : req.body.id_rol,
                 ID_PERSON : req.body.id_person,
                 STATE : "AC"
             }
         })
+        createAudit(req, res, "Creó el rol de usuario con el id "+ usrol.ID_ROL + " " + usrol.ID_PERSON)
         res.send({
             message: "Roles de usuario ha creada con éxito"
         });
@@ -39,7 +41,7 @@ const getIdUserRoles = async (req, res) =>{
 
 
 const updateUserRoles = async (req, res) =>{
-    await prisma.user_roles.update({
+    const updateUsRol = await prisma.user_roles.update({
         where: {
             ID_ROL : req.body.id_rol,
             ID_PERSON: req.body.id_person
@@ -48,13 +50,14 @@ const updateUserRoles = async (req, res) =>{
             STATE : req.body.state
         }
     })
+    createAudit(req, res, "Creó el rol de usuario con el id "+ updateUsRol.ID_ROL + " " + updateUsRol.ID_PERSON)
     res.send({
         message: "El rol de usuario ha sido actualizado con éxito."
     });
 }
 
 const deleteUserRoles = async (req, res) =>{
-    await prisma.persons.update({
+    const deleteUsRol = await prisma.persons.update({
         where: {
             ID_ROL : req.body.id_rol,
             ID_PERSON: req.body.id_person
@@ -63,6 +66,7 @@ const deleteUserRoles = async (req, res) =>{
             STATE: "IC",
         }
     })
+    createAudit(req, res, "Se eliminó rol de usuario con el id "+ deleteUsRol.ID_ROL + " " + deleteUsRol.ID_PERSON)
     res.send({
         message: "El rol de usuario ha sido borrado con éxito."
     });

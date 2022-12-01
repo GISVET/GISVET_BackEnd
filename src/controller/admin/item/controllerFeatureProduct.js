@@ -1,5 +1,6 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const {createAudit} = require("../../auditor")
 
 const createFeatureProducts = async (req, res) =>{
     try {
@@ -12,6 +13,7 @@ const createFeatureProducts = async (req, res) =>{
                 MANUFACTURING_DATE: new Date (req.body.manufacturing_date)
             }
         })
+        createAudit(req, res, "Creó la característica con el id "+ info.ID_FEATURE)
         res.json(info)        
     } catch (error) {
         if(error.code === undefined){
@@ -54,7 +56,7 @@ const getFeatureProducts = async (req, res) =>{
 
 const updateFeatureProduct = async (req, res) =>{
     try {
-        await prisma.feature_products.update({
+        const updateFePro = await prisma.feature_products.update({
             where:{
                 ID_FEATURE: req.body.id_feature
             },
@@ -66,6 +68,7 @@ const updateFeatureProduct = async (req, res) =>{
                 MANUFACTURING_DATE: new Date (req.body.manufacturing_date)
             }
         })
+        createAudit(req, res, "Se actualizó la característica con el id "+ updateFePro.ID_FEATURE)
         res.send({
             message: "La característica se actualizó con éxito"
         })

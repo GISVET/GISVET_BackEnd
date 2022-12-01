@@ -1,14 +1,16 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const {createAudit} = require("../../auditor")
 
 const createRole = async (req, res) =>{
-    await prisma.roles.create({
+    const rol = await prisma.roles.create({
         data:{
             NAME_ROL: req.body.name_rol.charAt(0).toUpperCase()  + req.body.name_rol.slice(1),
             DESCRIPTION_ROL: req.body.description_rol,
             STATE_ROL: "AC",
         }
     })
+    createAudit(req, res, "Creó el rol con el id "+ rol.ID_ROL)
     res.send({
         message: "Rol creado con éxito"
     });
@@ -34,7 +36,7 @@ const getIdRoles = async(req,res) =>{
 }
 
 const updateRol = async (req, res) =>{
-    await prisma.roles.update({
+    const acutRol = await prisma.roles.update({
         where: {
             ID_ROL: req.body.id_rol
         },
@@ -44,6 +46,7 @@ const updateRol = async (req, res) =>{
             STATE_ROL: req.body.state_rol
         }
     })
+    createAudit(req, res, "Creó actualizó la información del rol con id"+ acutRol.ID_ROL)
     res.send({
         message: "Rol actualizado con éxito."
     });

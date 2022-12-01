@@ -2,6 +2,7 @@ const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const {createAudit} = require("../auditor")
 
 const getProducts = async (req, res) =>{
     try {
@@ -79,6 +80,7 @@ const generateToken = async (req, res) =>{
             }
         })
         const object = [getToken(data)]
+        createAudit(req, res, "Creó el token para el usuario con el id "+ data.ID_PERSON)
         jwt.sign({object},data.DOCUMENT,{expiresIn: '20h'},(error,token)=>{
             enviarMail(data.accounts[0].EMAIL, token).then((data)=>{
                 res.json(data)
