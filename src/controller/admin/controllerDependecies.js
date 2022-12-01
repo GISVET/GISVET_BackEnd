@@ -12,11 +12,11 @@ const createDependencie = async (req, res) =>{
         })
         createAudit(req, res, "Creó la dependecia con el id "+depe.ID_DEPENDENCIE)
         res.send({
-            message: "Dependencia creada con exito"
+            message: "Dependencia creada con éxito"
         });
     } catch (error) {
         res.status(400).send({
-            message: "Ocurrio un error al momento de crear una dependecia"
+            message: "Ocurrió un error al momento de crear una dependecia"
         })
         console.log(error)
     }
@@ -59,13 +59,13 @@ const createDependencieUser = async (req, res) =>{
                 DATE_PERSON_DEPENDENCIES: new Date(new Date()-3600*1000*5).toISOString()
             }
         })
-        createAudit(req, res, "Se asigno la dependecia "+depe.ID_DEPENDENCIE+" al usuario " + depe.ID_PERSON)
+        createAudit(req, res, "Se asignó la dependecia "+depe.ID_DEPENDENCIE+" al usuario " + depe.ID_PERSON)
         res.send({
             message: "Dependiencia asignada correctamente"
         });
     } catch (error) {
         res.status(400).send({
-            message: "Ocurrio un error al momento de asignar una dependecia"
+            message: "Ocurrió un error al momento de asignar una dependecia"
         });
         console.log(error)
     }
@@ -107,7 +107,7 @@ const updateDependecie = async (req, res) =>{
         })
         createAudit(req, res, "Se actualizó la dependecia con el id "+depe.ID_DEPENDENCIE)
         res.send({
-            message: "Dependencia actualizada con exito."
+            message: "Dependencia actualizada con éxito."
         });
     } catch (error) {
         console.log(error)

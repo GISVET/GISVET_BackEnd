@@ -1,15 +1,17 @@
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient()
+const {createAudit} = require("../../auditor")
 
 const createProducts = async (req, res) =>{
     try {
-        await prisma.products.create({
+        const product =await prisma.products.create({
             data:{
                 PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
                 MEASUREMENT_UNITS: req.body.measurement_units,
                 TYPE_PRODUCT: req.body.type_product,
             }
         })
+        createAudit(req, res, "Creó el producto con el id "+ product.ID_PRODUCT)
         res.send({
             message: "Producto creado con éxito"
         });
@@ -143,7 +145,6 @@ const getSpecificProduct = async (req, res) =>{
             })
         }else {            
             res.json(formtJsonSpecific(data))
-            // res.json(data)
         }
     }catch(error){
         console.log(error)  
@@ -166,6 +167,7 @@ const updateProduct = async (req, res) =>{
                 TYPE_PRODUCT: req.body.type_product
             }
         })
+        createAudit(req, res, "Se actualizó el producto con el id "+ product.ID_PRODUCT)
         res.send({
             message: "El producto se actualizó con éxito"
         })
