@@ -209,6 +209,37 @@ const updatePersons = async (req, res) =>{
     }
 }
 
+const getDependeciePersons = async (req, res) =>{
+    try {
+        const person = await prisma.persons.findUnique({
+            where:{
+                DOCUMENT: req.body.document
+            },
+            include:{
+                person_dependencies:{
+                    include:{
+                        dependencies: true
+                    }
+                }
+            }
+        })
+        res.json(jsonDependeciePerson(person))
+    } catch (error) {
+        console.log(error)
+        res.status(400).send({
+            message:  "Ocurrió un error al buscar el usuario"
+        })
+    }
+}
+
+function jsonDependeciePerson(data){
+    let dependecia = []
+    for (let i = 0; i < data.person_dependencies.length; i++) {
+        dependecia[i] = data.person_dependencies[i].dependencies.DEPENDENCIE_NAME
+    }
+    return dependecia
+}
+
 const deletePersons = async (req, res) =>{
     try{
         const person = await prisma.persons.update({
@@ -243,5 +274,6 @@ module.exports = {
     getPersons,
     getIdPersons,
     updatePersons,
-    deletePersons
+    deletePersons,
+    getDependeciePersons
 }
