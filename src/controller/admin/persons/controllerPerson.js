@@ -235,7 +235,11 @@ const getDependeciePersons = async (req, res) =>{
 function jsonDependeciePerson(data){
     let dependecia = []
     for (let i = 0; i < data.person_dependencies.length; i++) {
-        dependecia[i] = data.person_dependencies[i].dependencies.DEPENDENCIE_NAME
+        const objt = {
+            DEPENDENCIE_NAME: data.person_dependencies[i].dependencies.DEPENDENCIE_NAME,
+            TYPE_DEPENDENCIE: data.person_dependencies[i].dependencies.TYPE_DEPENDENCIE
+        }
+        dependecia[i] = objt
     }
     return dependecia
 }
