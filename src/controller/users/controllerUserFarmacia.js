@@ -132,7 +132,7 @@ const sendProductsFarmacia = async (req, res) =>{
                 })
             }
         }
-        createAudit(req, res, "Se enviaron productos de bodega a farmcia")
+        createAudit(req, res, "Se enviaron productos de Farmacia a Consultorio")
         res.send({
             message: "Se registraron los productos en el consultorio con exito"
         })
