@@ -4,20 +4,47 @@ const {createAudit} = require("../auditor")
 
 const createProductTracings = async (req, res) =>{     
     try{
-        const pt = await prisma.product_tracings .create({
-            data:{
-                ID_PERSON : req.body.id_person,
-                ID_ITEM : req.body.id_item,
-                ID_CLINIC_HISTORY: req.body.id_clinic_history,
-                QUANTITY_USED : req.body.quantity_used,
-                UNIT_MEASUREMENT : req.body.unit_measurement,
-                DESTINY_SERVICE : req.body.destiny_service,                
-                DATE_PRODUCT_TRACING :  new Date(new Date()-3600*1000*5).toISOString()
-            }
-        })
-        createAudit(req, res, "Creó la trazabilidada con el id "+pt.ID_PRODUCT_TC)
+        let price = 0
+        let pc_array = []
+        const products = req.body.products
+        for (let i = 0; i < products.length; i++) {
+            let pct = await prisma.product_tracings.create({
+                data:{
+                    ID_PERSON : req.body.id_person,
+                    ID_ITEM : products[i].id_item,
+                    ID_CLINIC_HISTORY: req.body.id_clinic_history,
+                    QUANTITY_USED: products[i].quantity_used,
+                    UNIT_MEASUREMENT : products[i].unit_measurement,
+                    DESTINY_SERVICE : req.body.destiny_service,                
+                    DATE_PRODUCT_TRACING :  new Date(req.body.date_product_tracing)
+                }
+            })
+            const item = await prisma.item.findUnique({
+                where:{
+                    ID_ITEM: products[i].id_item
+                },
+                include:{
+                    feature_products: true 
+                }
+            })
+            pct["price_unit"] = item.feature_products.PRICE_PER_UNIT
+            pct["price_per_product"] = item.feature_products.PRICE_PER_UNIT* products[i].quantity_used
+            price += item.feature_products.PRICE_PER_UNIT* products[i].quantity_used
+            pc_array[i] = pct
+            await prisma.item.update({
+                where:{
+                    ID_ITEM: products[i].id_item
+                },
+                data:{
+                    QUANTITY: (item.QUANTITY - products[i].quantity_used)
+                }
+            })
+        }
+        
+        createAudit(req, res, "Se creo trazabilidad de productos a la historia clinica "+req.body.id_clinic_history)
         res.send({
-            message: "Trazabilidad registrada del producto registrada con éxito"
+            Total_price: price,
+            Products: pc_array
         });
     }catch (error) {
         if(error.code === undefined){

@@ -144,9 +144,7 @@ const sendProductsFarmacia = async (req, res) =>{
     }
 }
 
-const returnProducts = async (req, res) =>{
-    
-}
+
 
 
 module.exports = {

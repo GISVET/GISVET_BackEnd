@@ -13,7 +13,7 @@ const createUserRoles = async (req, res) =>{
         })
         createAudit(req, res, "Creó el rol de usuario con el id "+ usrol.ID_ROL + " " + usrol.ID_PERSON)
         res.send({
-            message: "Roles de usuario ha creada con éxito"
+            message: "Roles asignado con exito"
         });
     } catch (error) {
         console.log(error)
