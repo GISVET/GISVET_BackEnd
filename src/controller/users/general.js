@@ -66,7 +66,7 @@ function formtJson(data){
 
 function calculateDate(date){
     const diff = Math.trunc((new Date(date).getTime() - (new Date(new Date()-3600*1000*5).getTime()))/(1000*60*60*24))
-    return diff > 0 ? diff + " días" :"Producto vencido"
+    return diff > 0 ? diff + " días para vencerse" :"Producto vencido hace "+Math.abs(diff)+ " días"
 }
 
 const generateToken = async (req, res) =>{
