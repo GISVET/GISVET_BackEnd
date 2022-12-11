@@ -9,6 +9,11 @@ const {getAudit} = require("../controller/auditor")
 
 //------------------ Cuentas-----------------------
 
+/**
+ * @swagger
+ * 
+ */
+
 router.post('/login', loginUser)
 router.post('/register', registerUser)
 router.post('/changeRol', changeRol)
@@ -17,9 +22,9 @@ router.get('/getAudit', getAudit)
 
 //-------------------Rutas-----------------------
 
-router.use('/Admin',verificationAdmin,require('./admin/routesAdmin'))
-router.use('/Auditor',verificationAudi,require('./admin/routesAdmin'))
-router.use('/Users',verificationUser,require('./users/routesUsers'))
+router.use('/Admin',require('./admin/routesAdmin'))
+router.use('/Auditor',require('./admin/routesAdmin'))
+router.use('/Users',require('./users/routesUsers'))
 
 //-------------------Verificar token --------------------
 
