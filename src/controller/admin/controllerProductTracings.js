@@ -6,6 +6,8 @@ const createProductTracings = async (req, res) =>{
     try{
         let price = 0
         let pc_array = []
+        let date = new Date(req.body.date_product_tracing)
+        date.setHours(date.getHours() - 5)
         const products = req.body.products
         for (let i = 0; i < products.length; i++) {
             let pct = await prisma.product_tracings.create({
@@ -16,7 +18,7 @@ const createProductTracings = async (req, res) =>{
                     QUANTITY_USED: products[i].quantity_used,
                     UNIT_MEASUREMENT : products[i].unit_measurement,
                     DESTINY_SERVICE : req.body.destiny_service,                
-                    DATE_PRODUCT_TRACING :  new Date(req.body.date_product_tracing)
+                    DATE_PRODUCT_TRACING :  date
                 }
             })
             const item = await prisma.item.findUnique({
@@ -46,6 +48,39 @@ const createProductTracings = async (req, res) =>{
             Total_price: price,
             Products: pc_array
         });
+    }catch (error) {
+        if(error.code === undefined){
+        res.send({
+            message: "Ocurrio un error al registrar la trazabilidad del producto"
+        });
+    }else{
+        res.send({
+            message: "Ocurrio el error "+ error.code+ " al resgistrar la trazabilidad del producto"
+        });  
+    }
+    console.log(error) 
+    }
+}
+
+const getProductTracingsWithPrice = async (req, res) =>{     
+    try{
+        let pct = await prisma.product_tracings.findMany({
+            where:{
+                ID_PRODUCT_TC: req.body.id_product_tracing
+            }
+        })
+        const item = await prisma.item.findUnique({
+            where:{
+                ID_ITEM: pct[0].ID_ITEM
+            },
+            include:{
+                feature_products: true 
+            }
+        })
+        pct[0]["price_unit"] = item.feature_products.PRICE_PER_UNIT
+        pct[0]["price_per_product"] = item.feature_products.PRICE_PER_UNIT* pct[0].QUANTITY_USED
+
+        res.json(pct[0]);
     }catch (error) {
         if(error.code === undefined){
         res.send({
@@ -119,4 +154,5 @@ function formGetProductTraicing(data){
 module.exports = {
     createProductTracings,
     getProductTraicing,
+    getProductTracingsWithPrice
 }
