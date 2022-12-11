@@ -9,7 +9,7 @@ const {createProductTracings, getProductTraicing} = require ('../../controller/a
  * @swagger
  * components:
  *  schemas:
- *      Create dependecia:
+ *      Crear dependecia:
  *          type: object
  *          description: El endpoint /Admin/createDependecie permite crear una dependecia 
  *          properties:
@@ -34,7 +34,7 @@ router.post('/createDependecie', createDependencie)
  * @swagger
  * components:
  *  schemas:
- *      Get dependecia:
+ *      Obtener dependecia:
  *          type: object
  *          description: El endpoint /Admin/getDependencies permite obtener todas las dependecias o ser filtra y organizada por los siguientes parametros
  *          properties:
@@ -61,7 +61,7 @@ router.post('/getDependencies', getDependencies)
  * @swagger
  * components:
  *  schemas:
- *      Get id dependencies:
+ *      Obtener dependecia en especifico:
  *          type: object
  *          description: El endpoint /Admin/getIdDependencies permite obtener una dependecia en especifico por medio del id
  *          properties:
@@ -78,7 +78,7 @@ router.post('/getIdDependencies', getIdDependencies)
  * @swagger
  * components:
  *  schemas:
- *      Assing dependencie to person:
+ *      Asignar dependencie a una persona:
  *          type: object
  *          description: El endpoint /Admin/createDependencieUser permite asignarle una dependecia a un usuario
  *          properties:
@@ -101,7 +101,7 @@ router.post('/createDependencieUser', createDependencieUser)
  * @swagger
  * components:
  *  schemas:
- *      Actualizara dependencia:
+ *      Actualizar dependencia:
  *          type: object
  *          description: El endpoint /Admin/updateDependecie permite actulizara una dependecia
  *          properties:
@@ -133,38 +133,134 @@ router.put('/updateDependecie', updateDependecie)
  *  schemas:
  *      Crear paciente:
  *          type: object
- *          description: El endpoint /Admin/updateDependecie permite actulizara una dependecia
+ *          description: El endpoint /Admin/createPatient permite crear un paciente
  *          properties:
- *              id_dependencie:
+ *              id_clinic_history:
  *                  type: integer
- *                  description: Id de la dependecia a actulizar
- *              dependencie_name:
+ *                  description: Id de la historia clinica del paciente
+ *              name_patient:
  *                  type: string
- *                  description: Nuevo nombre de la dependecia
- *              type_dependencie: 
- *                  type: string
- *                  description: Nuevo tipo de dependecia
+ *                  description: Nombre del paciente
  *          require:
- *               - id_dependencie
- *               - dependencie_name
- *               - type_dependencie
+ *               - id_clinic_history
+ *               - name_patient
  *          example:
- *              id_dependencie: 1
- *              dependencie_name: nueva dependecia
- *              type_dependencie: B
+ *              id_clinic_history: 13213
+ *              name_patient: Lupe
  */
 router.post('/createPatient', createPatient)
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Obtener paciente:
+ *          type: object
+ *          description: El endpoint /Admin/getPatient permite obtener todos los pacientes
+ */
 router.get('/getPatient', getPatient)
 router.get('/getPatientsOrderAZ',getPatiensOrderAZ)
 router.get('/getPatientsOrderZA',getPatiensOrderZA)
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Obtener paciente en especifico:
+ *          type: object
+ *          description: El endpoint /Admin/getSpecificPatient permite obtener un paciente en especifico por medio de la historia clinica y el nombre del paciente
+ *          properties:
+ *              id_clinic_history:
+ *                  type: integer
+ *                  description: Id de la historia clinica del paciente
+ *              name_patient:
+ *                  type: string
+ *                  description: Nombre del paciente
+ *          require:
+ *               - id_clinic_history
+ *               - name_patient
+ *          example:
+ *              id_clinic_history: 13213
+ *              name_patient: Lupe
+ */
 router.post('/getSpecificPatient', getSpecificPatient)
 router.post('/getNamePatient', getNamePatient)
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Actualizar un paciente en especifico:
+ *          type: object
+ *          description: El endpoint /Admin/updatePatient permite actulizar un paciente en especifico
+ *          properties:
+ *              id_clinic_history:
+ *                  type: integer
+ *                  description: Id de la historia clinica del paciente a buscar
+ *              name_patient:
+ *                  type: string
+ *                  description: Nuevo nombre del paciente
+ *          require:
+ *               - id_clinic_history
+ *               - name_patient
+ *          example:
+ *              id_clinic_history: 13213
+ *              name_patient: Lupe nuevo
+ */
 router.put('/updatePatient', updatePatient)
 
 
 // --------------------------- Product Tracings ----------------------
 
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Crer seguimiento de un producto:
+ *          type: object
+ *          description: El endpoint /Admin/createProductTracing permite actulizar un paciente en especifico
+ *          properties:
+ *              id_person:
+ *                  type: integer
+ *                  description: Id de la persona que usará el producto
+ *              id_clinic_history:
+ *                  type: integer
+ *                  description: Historia clinica del paciente que se le asignará el producto
+ *              destiny_service:
+ *                  type: string
+ *                  description: Destino del producto
+ *              date_product_tracing:
+ *                  type: string
+ *                  description: Fecha en que se le asigno el producto
+ *              id_item:
+ *                  type: integer
+ *                  description: Id del item a asignar
+ *              quantity_used:
+ *                  type: integer
+ *                  description: Cantidad de producto asignado
+ *              unit_measurement:
+ *                  type: string
+ *                  description: Unidad de medida
+ *          require:
+ *               - id_person
+ *               - id_clinic_history
+ *               - destiny_service
+ *               - date_product_tracing
+ *               - id_item
+ *               - quantity_used
+ *               - unit_measurement
+ *          example:
+ *              id_person: 1
+ *              id_clinic_history: 13213
+ *              destiny_service: "CR"
+ *              date_product_tracing: "2018-12-8"
+ *              products:
+ *                  id_item: 1
+ *                  quantity_used: 1
+ *                  unit_measurement: ML
+ */
 router.post('/createProductTracing', createProductTracings)
+
+
 router.post('/getProductTracing', getProductTraicing)
 
 //-------------------------Item---------------------------------

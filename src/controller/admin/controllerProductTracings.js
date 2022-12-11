@@ -82,22 +82,17 @@ const getProductTracingsWithPrice = async (req, res) =>{
 
         res.json(pct[0]);
     }catch (error) {
-        if(error.code === undefined){
-        res.send({
+        res.status(400).send({
             message: "Ocurrio un error al registrar la trazabilidad del producto"
         });
-    }else{
-        res.send({
-            message: "Ocurrio el error "+ error.code+ " al resgistrar la trazabilidad del producto"
-        });  
-    }
-    console.log(error) 
+        console.log(error) 
     }
 }
 
 const getProductTraicing = async (req, res) =>{
-    const data = await prisma.product_tracings .findMany({
+    const data = await prisma.product_tracings.findMany({
         where:{
+            ID_PRODUCT_TC: req.body.id_product_tracing,
             ID_PERSON:req.body.id_person,
             ID_ITEM:req.body.id_item,
             ID_CLINIC_HISTORY:req.body.id_clinic_history,
@@ -111,7 +106,8 @@ const getProductTraicing = async (req, res) =>{
                         include:{
                             products:true
                         }
-                    }
+                    },
+                    feature_products:true
                 }
             },
             clinic_histories: true
@@ -144,7 +140,9 @@ function formGetProductTraicing(data){
             DATE_PRODUCT_TRACING: data[i].DATE_PRODUCT_TRACING,
             FULL_NAME_PERSON: data[i].persons.FULL_NAME,
             DOCUMENT_PERSON: data[i].persons.DOCUMENT,
-            PRODUCT_NAME: data[i].item.product_brand.products.PRODUCT_NAME
+            PRODUCT_NAME: data[i].item.product_brand.products.PRODUCT_NAME,
+            price_unit: data[i].item.feature_products.PRICE_PER_UNIT,
+            price_per_product: data[i].item.feature_products.PRICE_PER_UNIT * data[i].QUANTITY_USED
         }
         json[i] = objt
     }

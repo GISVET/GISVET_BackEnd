@@ -5,11 +5,10 @@ const {createAudit} = require("../../auditor")
 const createItem = async (req, res) =>{
     try {
         const nameBrand = req.body.name_brand
-        const productName = req.body.product_name.charAt(0).toUpperCase() + req.body.product_name.slice(1)
         
-        const searchProduct = await prisma.products.findMany({
+        const searchProduct = await prisma.feature_products.findMany({
             where: {
-                PRODUCT_NAME: productName
+                IUP: req.body.iup
             }
         })
 
@@ -20,28 +19,14 @@ const createItem = async (req, res) =>{
         })
 
         if(searchProduct[0] === undefined){
-            if(searchBrand != null){
-
-                addProduct(res, req, searchBrand)
-                res.send({
-                    message: "Item creado con éxito"
-                });            
-            }else{
-                const brand = await prisma.brands.create({
-                    data:{
-                        NAME_BRAND: nameBrand
-                    }
-                })           
-
-                addProduct(res, req, searchBrand)
-                res.send({
-                    message: "Item creado con éxito"
-                });
-            }        
             
+            addProduct(res, req, searchBrand)
+            res.send({
+                message: "Item creado con éxito"
+            });                   
         }else{
             res.status(400).send({
-                message: "El producto ingresado ya existe"
+                message: "El iup ya existe"
             }) 
         }  
         
@@ -54,11 +39,9 @@ const createItem = async (req, res) =>{
 }
 
 const addProduct = async (res, req, brand) =>{
-    const product = await prisma.products.create({
-        data:{
+    const product = await prisma.products.findMany({
+        where:{
             PRODUCT_NAME: req.body.product_name.charAt(0).toUpperCase() +req.body.product_name.slice(1),
-            MEASUREMENT_UNITS: req.body.measurement_units,
-            TYPE_PRODUCT: req.body.type_product
         }
     })
 
@@ -74,23 +57,40 @@ const addProduct = async (res, req, brand) =>{
         }
     })
 
-    const productBrand = await prisma.product_brand.create({
-        data:{
+    const productBrand = await prisma.product_brand.findMany({
+        where:{
             ID_BRAND: brand.ID_BRAND,
-            ID_PRODUCT: product.ID_PRODUCT,
+            ID_PRODUCT: product[0].ID_PRODUCT,
         }       
     })
-
-    const item  = await prisma.item.create({
-        data:{
-            PRESENTATION: req.body.presentation,
-            QUANTITY: req.body.quantity,                        
-            ID_PRODUCT_BRAND: productBrand.ID_PRODUCT_BRAND,
-            ID_FEATURE: feature.ID_FEATURE,
-            ID_DEPENDENCIE: req.body.id_dependencie
-        }
-    })
-    createAudit(req, res, "Se creo el item con el id "+item.ID_ITEM)
+    if(productBrand[0] === undefined){
+        const productBrand = await prisma.product_brand.create({
+            data:{
+                ID_BRAND: brand.ID_BRAND,
+                ID_PRODUCT: product[0].ID_PRODUCT,
+            }       
+        })
+        await prisma.item.create({
+            data:{
+                PRESENTATION: req.body.presentation,
+                QUANTITY: req.body.quantity,                        
+                ID_PRODUCT_BRAND: productBrand.ID_PRODUCT_BRAND,
+                ID_FEATURE: feature.ID_FEATURE,
+                ID_DEPENDENCIE: req.body.id_dependencie
+            }
+        })
+    }else{
+        await prisma.item.create({
+            data:{
+                PRESENTATION: req.body.presentation,
+                QUANTITY: req.body.quantity,                        
+                ID_PRODUCT_BRAND: productBrand[0].ID_PRODUCT_BRAND,
+                ID_FEATURE: feature.ID_FEATURE,
+                ID_DEPENDENCIE: req.body.id_dependencie
+            }
+        })
+    }
+    createAudit(req, res, "Se creo un nuevo item")
 }
 
 const assingItem = async (req, res) =>{

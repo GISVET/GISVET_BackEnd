@@ -16,15 +16,9 @@ const createProducts = async (req, res) =>{
             message: "Producto creado con éxito"
         });
     } catch (error) {
-        if(error.code === undefined){
-            res.send({
-                message: "Ocurrió un error al momento de crear el producto"
-            });
-        }else{
-            res.send({
-                message: "Ocurrió el error "+error.code+ " al momento de crear el producto"
-            });  
-        }
+        res.status(400).send({
+            message: "Ocurrió el error al momento de crear el producto"
+        });
         console.log(error)
     }
 }
@@ -83,7 +77,7 @@ const getItemProduct =  async (req, res) =>{
             res.json(formtJson(data))
         }
     } catch (error) {
-        res.send({
+        res.status(400).send({
             message: "Ocurrió un error al momento obtener los productos"
         })
         console.log(error)
@@ -109,7 +103,7 @@ const getItemProductDepartment = async (req, res) =>{
             res.json(formtJsonDependece(data)) 
         }
     }catch (error) {
-        res.send({
+        res.status(400).send({
             message: "Ocurrió un error al momento obtener los productos"
         })
         console.log(error)
@@ -149,7 +143,7 @@ const getSpecificProduct = async (req, res) =>{
     }catch(error){
         console.log(error)  
         res.status(400).send({
-            message: "Ocurrió el error "+ error.code+ " al momento de registrar el producto"
+            message: "Ocurrió el error al momento de buscar un producto"
         })
     }            
 }
@@ -172,7 +166,7 @@ const updateProduct = async (req, res) =>{
             message: "El producto se actualizó con éxito"
         })
     } catch (error) {
-        res.send({
+        res.status(400).send({
             message: "Ocurrió un error al momento de actualizar el producto"
         })
         console.log(error)

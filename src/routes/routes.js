@@ -13,7 +13,7 @@ const {getAudit} = require("../controller/auditor")
  * @swagger
  * components:
  *  schemas:
- *      Login:
+ *      Inicio de sesión:
  *          type: object
  *          description: El endpoint /login permite al usuario iniciar sesión creando un token 
  *          properties:
@@ -29,7 +29,7 @@ const {getAudit} = require("../controller/auditor")
  *          example:
  *              email: correo@edu.co
  *              password_account: contraseña123
- *      SignUp:
+ *      Registrar credenciales:
  *          type: object
  *          description: El endpoint /register permite al usuario registrar las credenciales de un usuario ya creadó
  *          properties:
@@ -50,7 +50,7 @@ const {getAudit} = require("../controller/auditor")
  *              email: correo@edu.co
  *              password_account: contraseña123
  *              id_person: 1
- *      changeRol:
+ *      Cambiar de rol:
  *          type: object
  *          description: El endpoint /changeRol en caso de tener varios roles permite cambiar el rol que se encuentra actualmente, esto se hace con ayuda del token ya asignado al momento de iniciar sesión
  *          properties:
@@ -61,7 +61,7 @@ const {getAudit} = require("../controller/auditor")
  *               - name_rol
  *          example:
  *              name_rol: Administrador
- *      Update credenciales:
+ *      Actualizar credenciales:
  *          type: object
  *          description: El endpoint /updateUser permite actulizar las credenciales del usuario
  *          properties:
@@ -82,7 +82,7 @@ const {getAudit} = require("../controller/auditor")
  *              email: correo@edu.co
  *              password_account: nueva_contraseña123
  *              email_new: nuevo_correo@edu.co
- *      GetAudit:
+ *      Obtener tabla de auditoria:
  *          type: object
  *          description: El endpoint /getAudit permite obtener los registros de la tabla de auditoria
  */
