@@ -21,7 +21,7 @@ const SwaggerSpec = {
       }
     ]
   },
-  apis:[`${path.join(__dirname,"./routes/routes")}`]
+  apis:[`${path.join(__dirname,"./routes/*/*.js")}`, `${path.join(__dirname,"./routes/*.js")}`]
 }
 
 app.use(express.json())
