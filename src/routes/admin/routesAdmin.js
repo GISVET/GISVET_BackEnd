@@ -251,8 +251,8 @@ router.put('/updatePatient', updatePatient)
  *          example:
  *              id_person: 1
  *              id_clinic_history: 13213
- *              destiny_service: "CR"
- *              date_product_tracing: "2018-12-8"
+ *              destiny_service: CR
+ *              date_product_tracing: 2018-12-8
  *              products:
  *                  id_item: 1
  *                  quantity_used: 1
@@ -260,7 +260,14 @@ router.put('/updatePatient', updatePatient)
  */
 router.post('/createProductTracing', createProductTracings)
 
-
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *      Obtener el seguimiento:
+ *          type: object
+ *          description: El endpoint /Admin/getProductTraicing permite obtener un seguimiento de un producto por medio de los siguintes parametros id_person, id_clinic_history, destiny_service, id_item
+ */
 router.post('/getProductTracing', getProductTraicing)
 
 //-------------------------Item---------------------------------
