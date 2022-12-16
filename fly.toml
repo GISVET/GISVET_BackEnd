@@ -1,6 +1,6 @@
-# fly.toml file generated for gisvet on 2022-11-29T10:29:00-05:00
+# fly.toml file generated for gisvet-2 on 2022-12-15T12:33:30-05:00
 
-app = "gisvet"
+app = "gisvet-2"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []

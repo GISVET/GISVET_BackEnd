@@ -146,9 +146,23 @@ const sendProductsBodega = async (req, res) =>{
                     DEPENDENCIE_NAME: req.body.name_dependecie
                 }
             })
+            
+            const product = await prisma.product_brand.findUnique({
+                where:{
+                    ID_PRODUCT_BRAND: item.ID_PRODUCT_BRAND
+                },
+                include:{
+                    products: {
+                        select:{
+                            MEASUREMENT_UNITS:true
+                        }
+                    }
+                }
+                
+            })
             const item_new = await prisma.item.findMany({
                 where:{
-                    PRESENTATION: "U",
+                    PRESENTATION: product.products.MEASUREMENT_UNITS,
                     ID_DEPENDENCIE: dependencie[0].ID_DEPENDENCIE,
                     ID_FEATURE: item.ID_FEATURE,
                     ID_PRODUCT_BRAND: item.ID_PRODUCT_BRAND
@@ -165,7 +179,7 @@ const sendProductsBodega = async (req, res) =>{
             if(item_new[0] === undefined){
                 await prisma.item.create({
                     data:{
-                        PRESENTATION: "U",
+                        PRESENTATION: product.products.MEASUREMENT_UNITS,
                         QUANTITY: products[i].quantity* item.feature_products.QUANTITY_PER_UNIT,
                         ID_DEPENDENCIE: dependencie[0].ID_DEPENDENCIE,
                         ID_FEATURE: item.ID_FEATURE,

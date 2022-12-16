@@ -97,7 +97,7 @@ const sendProductsFarmacia = async (req, res) =>{
             })
             const item_new = await prisma.item.findMany({
                 where:{
-                    PRESENTATION: req.body.presentation,
+                    PRESENTATION: item.PRESENTATION,
                     ID_DEPENDENCIE: dependencie[0].ID_DEPENDENCIE,
                     ID_FEATURE: item.ID_FEATURE,
                     ID_PRODUCT_BRAND: item.ID_PRODUCT_BRAND
@@ -114,7 +114,7 @@ const sendProductsFarmacia = async (req, res) =>{
             if(item_new[0] === undefined){
                 await prisma.item.create({
                     data:{
-                        PRESENTATION: req.body.presentation,
+                        PRESENTATION: item.PRESENTATION,
                         QUANTITY: products[i].quantity,
                         ID_DEPENDENCIE: dependencie[0].ID_DEPENDENCIE,
                         ID_FEATURE: item.ID_FEATURE,
